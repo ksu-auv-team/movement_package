@@ -20,7 +20,7 @@
 
 void yolo_callback(const [data_type::data specific::ConstPtr& msg])
 {
-    for (int i=0; i < [size array]; i++)
+    for (int i=0; i < 2; i++) //recieving data type f 1x2
     {
         yolo_input[i] = msg->[label of data];
         
