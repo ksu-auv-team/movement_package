@@ -7,6 +7,7 @@
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 #include <iostream>
+#include "pi.h"
 
 #define ROLL_CHAN 	0
 #define PITCH_CHAN 	1
@@ -54,12 +55,6 @@ void yolo_callback(const [data_type::data specific::ConstPtr& msg])
 		PWM_y = 1000;	
 	acc_x += err_x;
 	acc_y += err_y; 
-    MAV_MSG.channels[ROLL_CHAN] = 1500;
-	MAV_MSG.channels[PITCH_CHAN] = 1500;							//Set to 1500 to PID without the sub moving forward
-	MAV_MSG.channels[THROT_CHAN] = PWM_y;
-	MAV_MSG.channels[YAW_CHAN] = PMW_x;
-	MAV_MSG.channels[MODES_CHAN] = HIGH_PWM;
-    auv_pid_rc_override.publish(MAV_MSG);
 }
 
 int main(int argc, char **argv)
@@ -72,6 +67,12 @@ int main(int argc, char **argv)
 	while (ros::ok())
     {
 		ros::spinOnce();
+		MAV_MSG.channels[ROLL_CHAN] = ;
+		MAV_MSG.channels[PITCH_CHAN] = ;							//Set to 1500 to PID without the sub moving forward
+		MAV_MSG.channels[THROT_CHAN] = ;
+		MAV_MSG.channels[YAW_CHAN] = ;
+		MAV_MSG.channels[MODES_CHAN] = HIGH_PWM;
+		auv_pid_rc_override.publish(MAV_MSG);
         RC_COMM_RATE.sleep;      
     }
     return 0;
