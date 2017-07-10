@@ -1,7 +1,7 @@
 #include <iostream>
 #include "pi.h"
 
-
+//3.1415926
 PI::PI()
 {
 }
@@ -22,7 +22,7 @@ double PI::getError()
 int PI::getCommand()
 {
 	dt = (clock() - cl)/(double)CLOCKS_PER_SEC;
-	cout <<dt;
+	//cout <<dt;
 	error = getError();
 	/*
 		Program integrator anti windup here
@@ -48,14 +48,10 @@ void PI::setPID(bool inStatus,int inGoal, int inPose, int inMode)
 
 void PI::setSigma()
 {
-	switch(status)
-	{
-		case true:
-			sigma += error*dt;
-			break;
-		case false:
-		    sigma = 0;
-	}
+	if(status)
+		sigma += error*dt;
+	else
+	    sigma = 0;
 }
 
 void PI::setGains()
@@ -99,7 +95,7 @@ void PI::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0;
+						kp = .9375; ki = 0;
 						break;
 					case 2:					//2 should be downard facing camera
 						kp = 0; ki = 0;

@@ -26,8 +26,8 @@ ros::Publisher auv_pid_rc_override;
 int x,y;
 
 void poseMessage(const std_msgs::Int32MultiArray& msg){
-		x=msg.data[1];
-        y=msg.data[2];
+		x=msg.data[0];
+        y=msg.data[1];
 }
 
 int main( int argc, char** argv ){
@@ -44,7 +44,7 @@ int main( int argc, char** argv ){
         //inGoal should be the center of the cam so if 640x480 x_inGoal = 320 y_inGoal = 240
         //inPose is the location of the tracked object the x and y coordinates are treated in the callback function above
         //inMode is for the camera used 1- Forward Facing Camera 2- Downward Facin Camera
-        calibrated_controller.setPID(true,0,1,1); 
+        calibrated_controller.setPID(true,320,x,1); 
         //Set the mavros commands here
         //We could use the PI::getCommand() function but we'll use the other control commands instead
         //It'll allow us to set the PI but also test the commands use in the actual code
@@ -57,6 +57,7 @@ int main( int argc, char** argv ){
 		MAV_MSG.channels[THROT_CHAN] = 1500; //calibrated_controller.throttle_command();
 		MAV_MSG.channels[YAW_CHAN] = calibrated_controller.yaw_command();
 		MAV_MSG.channels[MODES_CHAN] = HIGH_PWM;
+        //cout <<"Roll = " <<MAV_MSG.channels[ROLL_CHAN] <<" , " <<"Pitch = " <<MAV_MSG.channels[PITCH_CHAN] <<" , " <<"Throttle = " <<MAV_MSG.channels[THROT_CHAN] <<" , " <<"Yaw = " <<MAV_MSG.channels[YAW_CHAN] <<endl;
 		auv_pid_rc_override.publish(MAV_MSG);		
         ros::spinOnce();
         RC_COMM_RATE.sleep();
