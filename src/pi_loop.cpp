@@ -90,6 +90,7 @@ int main( int argc, char** argv ){
                 boolVar.data=false;
                 pi_loop_check.publish(boolVar);
             }
+        past_mode = mode;
         ros::spinOnce();
         RC_COMM_RATE.sleep();
 
