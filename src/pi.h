@@ -1,8 +1,11 @@
 #include <iostream>	
 #include <string>
 #include <fstream>
+#include <cmath>
 
 using namespace std;
+
+#define eps 0.01
 
 //We will use a class and create PI objects that we can call inside of our main loop
 

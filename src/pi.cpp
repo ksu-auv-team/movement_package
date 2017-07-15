@@ -177,7 +177,10 @@ int PI::pitch_command()
 
 double PI::getPercentError()
 {
-	return 100*getError()/goal;
+	if (goal !=0)
+		return 100*abs(getError())/goal;
+	else
+		return 100*abs(getError())/eps;
 }
 
 void PI::reset()

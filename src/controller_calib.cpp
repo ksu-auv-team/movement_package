@@ -24,17 +24,20 @@ using namespace std;
 ros::Publisher auv_pid_rc_override;
 
 int x,y;
+double dist,desiredDist;
 
 void poseMessage(const std_msgs::Int32MultiArray& msg){
 		x=msg.data[0];
         y=msg.data[1];
+        dist=msg.data[2];
+        desiredDist=msg.data[3];
 }
 
 int main( int argc, char** argv ){
     ros::init(argc, argv,"controller_calib_node");
 	ros::NodeHandle nh;
     ros::Rate RC_COMM_RATE(45);
-    ros::Subscriber sub_obj = nh.subscribe("std_msgs/Int32MultiArray", 1000, &poseMessage);
+    ros::Subscriber sub_obj = nh.subscribe("controller_calib", 1000, &poseMessage);
     auv_pid_rc_override = nh.advertise<mavros_msgs::OverrideRCIn>("mavros/rc/override", 1000);
     mavros_msgs::OverrideRCIn MAV_MSG;
     PI calibrated_controller(1800,1200,4);  //PI(int inTopLimit,int inBottomLimit,int inChannel) 1-roll 2-pitch 3-throttle 4-yaw
