@@ -65,7 +65,7 @@ void PI::setGains()
 						kp = 0; ki = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 0; ki = 0;
+						kp = 0.9375; ki = 0;
 						break;
 				}
 				break;
@@ -76,7 +76,7 @@ void PI::setGains()
 						kp = 0; ki = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 0; ki = 0;
+						kp = 1.25; ki = 0;
 						break;				
 				}
 				break;
@@ -84,7 +84,7 @@ void PI::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0;
+						kp = 0.8333; ki = 0;
 						break;
 					case 2:					//2 should be downard facing camera
 						kp = 0; ki = 0;
@@ -95,7 +95,7 @@ void PI::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = .9375; ki = 0;
+						kp = .46875; ki = 0;
 						break;
 					case 2:					//2 should be downard facing camera
 						kp = 0; ki = 0;
