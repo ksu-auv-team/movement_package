@@ -9,11 +9,12 @@ Purpose: Provides definitions for control and communication with mavros/mavlink
 #ifndef SUB_CONTROL_DEF
 #define SUB_CONTROL_DEF
 
-#define ROLL_CHAN 	0
-#define PITCH_CHAN 	1
-#define THROT_CHAN 	2
-#define YAW_CHAN 	3
-#define MODES_CHAN	4
+#define PITCH_CHAN      0
+#define ROLL_CHAN 	    1
+#define THROTTLE_CHAN 	2
+#define YAW_CHAN 	    3
+#define FORWARD_CHAN    4
+#define LATERAL_CHAN    5
 
 #define HIGH_PWM	1900
 #define MID_PWM 	1500

@@ -1,58 +1,40 @@
-/**
+/*
 https://github.com/ksu-auv-team/movement_package
-movement_package_main.cpp
-Purpose: Provides methods and functions for communicating to mavros
+controller.h
+Purpose: provides parent class for creating a controller. 
+Controller.ProcessChannels should be overloaded for a new type ofcontroller.
+I envision this being the parent of a manual controler object and
+an AI/pid based controller object.
 
 @author shadySource
 @version 0.0.1
 */
-#include <chrono>
-#include <string.h>
-#include <ros/ros.h>
-#include <ros/console.h>
-#include <mavros_msgs/OverrideRCIn.h>
-#include <mavros_msgs/SetMode.h>
-#include <mavros_msgs/CommandBool.h>
-#include <mavros_msgs/ParamSet.h>
-#include <mavros_msgs/StreamRate.h>
-#include <sub_control_definitions.h>
-#include <pid.h>
+#ifndef CONTROLLER_DEF
+#define CONTROLLER_DEF
 
+#include "mavros_communicator.h"
 
-class MavComm
+namespace controller
+{
+
+class Controller
 {
     private:
-        // Basic NodeHandles
-        ros::NodeHandle _n;
+        //@var _mavrosCommunicator Object to interface with mavros
+        auto mavcomm::MavrosCommunicator _mavrosCommunicator;
 
-        // FCU Communication Rates
-        const int INFO_RATE;
-        const int FCU_COMM_RATE;
-
-        // Service Params
-        ros::ServiceClient _streamRateSrv, _modeSrv, _armSrv, _paramSrv;
-        mavros_msgs::SetMode _stabilizeModeMsg, _acroModeMsg, _manualModeMsg;
-        mavros_msgs::CommandBool _armMsg, _disarmMsg;
-        mavros_msgs::ParamSet _sysidMsg;
-        mavros_msgs::StreamRate _streamRateMsg;
-
-        // Publishers
-        ros::Publisher _overridePub;
-
+    
+        /**
+        Process channel inputs. Should be "hidden" for different controller types.
+        Uses _mavrosCommunicator->SetOverrideMessage to set rc channel outputs.
+        
+        @note default behavior is to set all inputs to MID_PWM.
+        */
+        void ProcessChannels();
 
     public:
         /**
-        Sets SYSID_MYGCS to 1 and FCU stream rate to 10.
-        SYSID_MYGCS must be set to 1 for OverriceRCIn to function.
-
-        @return true if set SYSID_MYGCS succeeds,
-        false if set SYSID_MYGCS fails
-        */
-        bool CommInit();
-
-
-        /**
-        Arms the FCU
+        Attempts to arm the FCU
 
         @return boolean success
         */
@@ -60,48 +42,22 @@ class MavComm
 
 
         /**
-        Disarms the FCU
-
-        @return boolean success
+        sets the override message in _mavrosCommunicator to the class's channel vars.
         */
-        bool DisarmFCU();
+        void SetOverrideMessage();
 
 
         /**
-        Sets FCU mode to "ACRO"
-
-        @return boolean success
+        Listens for teleop twist message and updates motors accordingly.
         */
-        bool SetModeAcro();
+        void ControlLoop();
+    
+
+    Controller();
+
+};//end Controller
 
 
-        /**
-        Sets FCU Mode to "STABILIZE"
+}//end namespace controller
 
-        @return boolean success
-        */
-        bool SetModeStabilize();
-
-
-        /**
-        Sets FCU Mode to "MANUAL"
-
-        @return boolean success
-        */
-        bool SetModeManual();
-
-        /**
-        Checks the motors by spinning each motor for one second
-
-        @param num_motors: number of motors connected to the pixhawk.
-        ex. 6 will spin all motors 1-6.
-        @return bool success
-        */
-        bool MotorTest(int num_motors);
-
- 
-    MavComm();
-
-    ~MavComm();
-
-};
+#endif
