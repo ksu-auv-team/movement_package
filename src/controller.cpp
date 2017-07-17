@@ -1,8 +1,11 @@
 #include "controller.h"
 
 Controller::Controller()
-    : INFO_RATE(10), FCU_COM_RATE(45)
+    : INFO_RATE(10), FCU_COMM_RATE(45)
 {
+    // Publishers
+    _overridePub = _n.advertise<mavros_msgs::OverrideRCIn>("mavros/rc/override", 10);
+
     // Services
     _modeSrv = _n.serviceClient<mavros_msgs::SetMode>("/mavros/set_mode");
     _armSrv = _n.serviceClient<mavros_msgs::CommandBool>("/mavros/cmd/arming");
@@ -14,12 +17,19 @@ Controller::Controller()
     _streamRateMsg.request.stream_id = 0;
     _streamRateMsg.request.message_rate = INFO_RATE;
     _streamRateMsg.request.on_off = true;
+    _manualModeMsg.request.base_mode = 0;
+    _manualModeMsg.request.custom_mode = "MANUAL";
     _stabilizeModeMsg.request.base_mode = 0;
     _stabilizeModeMsg.request.custom_mode = "STABILIZE";
     _acroModeMsg.request.base_mode = 0;
     _acroModeMsg.request.custom_mode = "ACRO";
     _armMsg.request.value = true;
     _disarmMsg.request.value = false;
+}
+
+Controller::~Controller()
+{
+    DisarmFCU();
 }
 
 bool Controller::CommInit()
@@ -120,4 +130,56 @@ bool Controller::SetModeStabilize()
     }
     ROS_WARN("Failed to use /mavros/set_mode serivce. Set mode to STABILIZE failed.");
     return false;
+}
+
+bool Controller::SetModeManual()
+{
+    if (_modeSrv.call(_manualModeMsg))
+    {
+        if (_manualModeMsg.response.success)
+        {
+            ROS_INFO("Set mode to MANUAL succeeded.");
+        }
+        else
+        {
+            ROS_WARN("Set mode to MANUAL failed.");
+        }
+        return _manualModeMsg.response.success;
+    }
+    ROS_WARN("Failed to use /mavros/set_mode serivce. Set mode to MANUAL failed.");
+    return false;
+}
+
+bool Controller::MotorTest(int num_motors)
+{
+    bool _success = this->SetModeManual();
+    if (!_success)
+    {
+        ROS_ERROR("Exiting MotorTest. See previous warning.");
+        return false;
+    }
+    int i, active_channel;
+    ros::Rate rate(FCU_COMM_RATE);
+    mavros_msgs::OverrideRCIn override_message;
+    auto start = std::chrono::system_clock::now();
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> diff = end-start;
+    while(ros::ok())
+    {
+        end = std::chrono::system_clock::now();
+        diff = end-start;
+        active_channel = (int) diff.count();
+        ROS_INFO("%d", active_channel);
+        if (active_channel >= num_motors)
+        {
+            break;
+        }
+        for (i=0; i < num_motors; i++)
+            override_message.channels[i]=MID_PWM;
+        override_message.channels[2] = MID_PWM+100;
+        _overridePub.publish(override_message);
+        rate.sleep();
+    }
+    this->DisarmFCU();
+    return true;
 }

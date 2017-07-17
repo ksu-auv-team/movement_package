@@ -10,5 +10,7 @@ int main(int argc, char **argv)
 
     sub_controller->ArmFCU();
 
-    sub_controller->SetModeStabilize();
+    sub_controller->MotorTest(6);
+
+    delete sub_controller;
 }

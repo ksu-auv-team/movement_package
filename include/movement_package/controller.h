@@ -6,6 +6,7 @@ Purpose: Provides methods and functions for communicating to mavros
 @author shadySource
 @version 0.0.1
 */
+#include <chrono>
 #include <string.h>
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -15,7 +16,7 @@ Purpose: Provides methods and functions for communicating to mavros
 #include <mavros_msgs/ParamSet.h>
 #include <mavros_msgs/StreamRate.h>
 #include <sub_control_definitions.h>
-#include <pi.h>
+#include <pid.h>
 
 
 class Controller
@@ -26,14 +27,17 @@ class Controller
 
         // FCU Communication Rates
         const int INFO_RATE;
-        const ros::Rate FCU_COM_RATE;
+        const int FCU_COMM_RATE;
 
         // Service Params
         ros::ServiceClient _streamRateSrv, _modeSrv, _armSrv, _paramSrv;
-        mavros_msgs::SetMode _stabilizeModeMsg, _acroModeMsg;
+        mavros_msgs::SetMode _stabilizeModeMsg, _acroModeMsg, _manualModeMsg;
         mavros_msgs::CommandBool _armMsg, _disarmMsg;
         mavros_msgs::ParamSet _sysidMsg;
-        mavros_msgs::StreamRate _streamRateMsg; 
+        mavros_msgs::StreamRate _streamRateMsg;
+
+        // Publishers
+        ros::Publisher _overridePub;
 
 
     public:
@@ -77,8 +81,27 @@ class Controller
         @return boolean success
         */
         bool SetModeStabilize();
- 
 
+
+        /**
+        Sets FCU Mode to "MANUAL"
+
+        @return boolean success
+        */
+        bool SetModeManual();
+
+        /**
+        Checks the motors by spinning each motor for one second
+
+        @param num_motors: number of motors connected to the pixhawk.
+        ex. 6 will spin all motors 1-6.
+        @return bool success
+        */
+        bool MotorTest(int num_motors);
+
+ 
     Controller();
+
+    ~Controller();
 
 };
