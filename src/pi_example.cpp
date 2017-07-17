@@ -1,11 +1,11 @@
 #include <iostream>
-#include "pi.h"
+#include "pid.h"
 
 using namespace std;
 
 int main()
 {
-	PI yaw_controller(1900,1100,4);
+	PID yaw_controller(1900,1100,4);
 	while(1)
 	{
 		yaw_controller.setPID(true,320,640,1);

@@ -6,10 +6,12 @@
 using namespace std;
 
 #define eps 0.01
-
-//We will use a class and create PI objects that we can call inside of our main loop
-
-class PI{
+/*
+We will use a class and create PID objects that we can call inside of our main loop
+The meaning and use of the following variables and functions are explained in the 
+implementation "pid.cpp"
+*/
+class PID{
 private: 
 	double goal;
 	double pose;
@@ -17,14 +19,16 @@ private:
 	int channel; //1-roll 2-pitch 3-throttle 4-yaw
 	bool status;
 	double error;
+	double last_error;
 	long sigma;
 	double kp;
 	double ki;
+	double kd;
 	double dt;
 	clock_t cl; 	
 public:
-	PI();
-	PI(int inTopLimit,int inBottomLimit,int inChannel);
+	PID();
+	PID(int inTopLimit,int inBottomLimit,int inChannel);
 	double getError();
 	int topLimit;
 	int bottomLimit;

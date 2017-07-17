@@ -1,12 +1,13 @@
 #include <iostream>
-#include "pi.h"
+#include "pid.h"
 
 //3.1415926
-PI::PI()
+
+PID::PID()
 {
 }
 
-PI::PI(int inTopLimit,int inBottomLimit,int inChannel)
+PID::PID(int inTopLimit,int inBottomLimit,int inChannel)
 {	
 	topLimit = inTopLimit;
 	bottomLimit = inBottomLimit;
@@ -14,12 +15,12 @@ PI::PI(int inTopLimit,int inBottomLimit,int inChannel)
 	cl = clock();
 }
 	
-double PI::getError()
+double PID::getError()
 {
 	return goal-pose;
 }
 
-int PI::getCommand()
+int PID::getCommand()
 {
 	dt = (clock() - cl)/(double)CLOCKS_PER_SEC;
 	//cout <<dt;
@@ -27,7 +28,7 @@ int PI::getCommand()
 	/*
 		Program integrator anti windup here
 	*/
-	int command = 1500-(kp*error+ki*sigma);
+	int command = 1500-(kp*error+ki*sigma+kd*(error-last_error)/dt);
 	if(command>topLimit)
 		command = topLimit;
 	if(command<bottomLimit)
@@ -37,7 +38,7 @@ int PI::getCommand()
 	return command;
 }
 
-void PI::setPID(bool inStatus,int inGoal, int inPose, int inMode)
+void PID::setPID(bool inStatus,int inGoal, int inPose, int inMode)
 {
 	status = inStatus;				//inStatus has to be true
 	setGoal(inGoal);
@@ -46,7 +47,7 @@ void PI::setPID(bool inStatus,int inGoal, int inPose, int inMode)
 	setGains();
 }
 
-void PI::setSigma()
+void PID::setSigma()
 {
 	if(status)
 		sigma += error*dt;
@@ -54,7 +55,7 @@ void PI::setSigma()
 	    sigma = 0;
 }
 
-void PI::setGains()
+void PID::setGains()
 {
 	switch(channel)
 	{
@@ -62,10 +63,10 @@ void PI::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0;
+						kp = 0; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 0.9375; ki = 0;
+						kp = 0.9375; ki = 0; kd = 0;
 						break;
 				}
 				break;
@@ -73,10 +74,10 @@ void PI::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0;
+						kp = 0; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 1.25; ki = 0;
+						kp = 1.25; ki = 0; kd = 0;
 						break;				
 				}
 				break;
@@ -84,10 +85,10 @@ void PI::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = 0.8333; ki = 0;
+						kp = 0.8333; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 0; ki = 0;
+						kp = 0; ki = 0; kd = 0;
 						break;				
 				}
 				break;
@@ -95,32 +96,32 @@ void PI::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = .46875; ki = 0;
+						kp = .46875; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 0; ki = 0;
+						kp = 0; ki = 0; kd = 0;
 						break;				
 				}
 				break;
 	}
 }
 
-void PI::setGoal(int inGoal)
+void PID::setGoal(int inGoal)
 {
 	goal = inGoal;
 }
 
-void PI::setPose(int inPose)
+void PID::setPose(int inPose)
 {
 	pose = inPose;
 }
 
-void PI::setMode(int inMode)
+void PID::setMode(int inMode)
 {
 	mode = inMode;
 }
 
-int PI::roll_command()
+int PID::roll_command()
 {
 	switch(mode)
 	{
@@ -133,21 +134,7 @@ int PI::roll_command()
 	}
 }
 
-int PI::yaw_command()
-{
-	switch(mode)
-	{
-		case 1:					//1 should be forward facing camera 
-			return getCommand();
-			break;
-		case 2:					//2 should be downard facing camera
-			return 1500;
-			break;						
-	}
-
-}
-
-int PI::throttle_command()
+int PID::yaw_command()
 {
 	switch(mode)
 	{
@@ -161,7 +148,21 @@ int PI::throttle_command()
 
 }
 
-int PI::pitch_command()
+int PID::throttle_command()
+{
+	switch(mode)
+	{
+		case 1:					//1 should be forward facing camera 
+			return getCommand();
+			break;
+		case 2:					//2 should be downard facing camera
+			return 1500;
+			break;						
+	}
+
+}
+
+int PID::pitch_command()
 {
 	switch(mode)
 	{
@@ -175,7 +176,7 @@ int PI::pitch_command()
 
 }
 
-double PI::getPercentError()
+double PID::getPercentError()
 {
 	if (goal !=0)
 		return 100*abs(getError())/goal;
@@ -183,7 +184,7 @@ double PI::getPercentError()
 		return 100*abs(getError())/eps;
 }
 
-void PI::reset()
+void PID::reset()
 {
 	status = false;
 	setSigma();

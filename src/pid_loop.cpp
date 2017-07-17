@@ -9,7 +9,7 @@
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 #include <iostream>
-#include "pi.h"
+#include "pid.h"
 
 #define ROLL_CHAN 	0
 #define PITCH_CHAN 	1
@@ -45,10 +45,10 @@ int main( int argc, char** argv ){
     mavros_msgs::OverrideRCIn MAV_MSG;
     int past_mode = 0;
     std_msgs::Bool boolVar;
-    PI roll_controller(1800,1200,1);
-	PI pitch_controller(1800,1200,2);
-	PI throttle_controller(1800,1200,3);
-	PI yaw_controller(1800,1200,4);
+    PID roll_controller(1800,1200,1);
+	PID pitch_controller(1800,1200,2);
+	PID throttle_controller(1800,1200,3);
+	PID yaw_controller(1800,1200,4);
 	while (ros::ok())
     {
 		if(mode != past_mode)
@@ -90,7 +90,6 @@ int main( int argc, char** argv ){
                 boolVar.data=false;
                 pi_loop_check.publish(boolVar);
             }
-        past_mode = mode;
         ros::spinOnce();
         RC_COMM_RATE.sleep();
 
