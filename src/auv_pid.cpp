@@ -7,7 +7,7 @@
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 #include <iostream>
-#include "pi.h"
+#include "pid.h"
 
 #define ROLL_CHAN 	0
 #define PITCH_CHAN 	1

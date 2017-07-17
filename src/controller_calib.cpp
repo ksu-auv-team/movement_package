@@ -8,7 +8,7 @@
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 #include <iostream>
-#include "pi.h"
+#include "pid.h"
 
 #define ROLL_CHAN 	0
 #define PITCH_CHAN 	1
@@ -40,7 +40,7 @@ int main( int argc, char** argv ){
     ros::Subscriber sub_obj = nh.subscribe("controller_calib", 1000, &poseMessage);
     auv_pid_rc_override = nh.advertise<mavros_msgs::OverrideRCIn>("mavros/rc/override", 1000);
     mavros_msgs::OverrideRCIn MAV_MSG;
-    PI calibrated_controller(1800,1200,4);  //PI(int inTopLimit,int inBottomLimit,int inChannel) 1-roll 2-pitch 3-throttle 4-yaw
+    PID calibrated_controller(1800,1200,4);  //PI(int inTopLimit,int inBottomLimit,int inChannel) 1-roll 2-pitch 3-throttle 4-yaw
     while (ros::ok())
     {
         //void setPID(bool inStatus,int inGoal, int inPose, int inMode);
