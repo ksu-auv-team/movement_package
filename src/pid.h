@@ -16,7 +16,7 @@ private:
 	double goal;
 	double pose;
 	int mode; 		
-	int channel; //1-roll 2-pitch 3-throttle 4-yaw
+	int channel; //2-throttle 3-yaw 4-forward 5-lateral
 	bool status;
 	double error;
 	double last_error;
@@ -39,10 +39,10 @@ public:
 	void setGoal(int inGoal);
 	void setPose(int inPose);
 	void setMode(int inMode);
-	int roll_command();
-	int yaw_command();
 	int throttle_command();
-	int pitch_command();
+	int yaw_command();
+	int forward_command();
+	int lateral_command();
 	double getPercentError();
 	void reset();
 };
