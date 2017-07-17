@@ -14,8 +14,8 @@ Controller::Controller()
     _streamRateMsg.request.stream_id = 0;
     _streamRateMsg.request.message_rate = INFO_RATE;
     _streamRateMsg.request.on_off = true;
-    _stabilizeModeMsg.request.base_mode = (uint8_t)2;
-    //_stabilizeModeMsg.request.custom_mode = "ACRO";
+    _stabilizeModeMsg.request.base_mode = 0;
+    _stabilizeModeMsg.request.custom_mode = "STABILIZE";
     _acroModeMsg.request.base_mode = 0;
     _acroModeMsg.request.custom_mode = "ACRO";
     _armMsg.request.value = true;
