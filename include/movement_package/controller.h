@@ -16,7 +16,7 @@ Purpose: Provides methods and functions for communicating to mavros
 #include <mavros_msgs/ParamSet.h>
 #include <mavros_msgs/StreamRate.h>
 #include <sub_control_definitions.h>
-#include <pi.h>
+#include <pid.h>
 
 
 class Controller
