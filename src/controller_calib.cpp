@@ -10,14 +10,13 @@
 #include <iostream>
 #include "pid.h"
 
-#define ROLL_CHAN 	0
-#define PITCH_CHAN 	1
 #define THROT_CHAN 	2
 #define YAW_CHAN 	3
-#define MODES_CHAN	4
-#define HIGH_PWM	1900
+#define FORWARD_CHAN 	4
+#define LATERAL_CHAN	5
+#define HIGH_PWM	1800
 #define MID_PWM 	1500
-#define LOW_PWM 	1100
+#define LOW_PWM 	1200
 
 using namespace std;
 
@@ -40,7 +39,7 @@ int main( int argc, char** argv ){
     ros::Subscriber sub_obj = nh.subscribe("controller_calib", 1000, &poseMessage);
     auv_pid_rc_override = nh.advertise<mavros_msgs::OverrideRCIn>("mavros/rc/override", 1000);
     mavros_msgs::OverrideRCIn MAV_MSG;
-    PID calibrated_controller(1800,1200,4);  //PI(int inTopLimit,int inBottomLimit,int inChannel) 1-roll 2-pitch 3-throttle 4-yaw
+    PID calibrated_controller(HIGH_PWM,LOW_PWM,YAW_CHAN);  //PI(int inTopLimit,int inBottomLimit,int inChannel) 2-throttle 3-yaw 4-forward 5-lateral
     while (ros::ok())
     {
         //void setPID(bool inStatus,int inGoal, int inPose, int inMode);
@@ -51,17 +50,15 @@ int main( int argc, char** argv ){
         //Set the mavros commands here
         //We could use the PI::getCommand() function but we'll use the other control commands instead
         //It'll allow us to set the PI but also test the commands use in the actual code
-        //PI::roll_command()
-        //PI::yaw_command()
         //PI::throttle_command()
-        //PI::pitch_command()
-        MAV_MSG.channels[ROLL_CHAN] = 1500; //calibrated_controller.roll_command();
-		MAV_MSG.channels[PITCH_CHAN] = 1500; //calibrated_controller.pitch_command();							
-		MAV_MSG.channels[THROT_CHAN] = 1500; //calibrated_controller.throttle_command();
-		MAV_MSG.channels[YAW_CHAN] = calibrated_controller.yaw_command();
-		MAV_MSG.channels[MODES_CHAN] = HIGH_PWM;
-        //cout <<"Roll = " <<MAV_MSG.channels[ROLL_CHAN] <<" , " <<"Pitch = " <<MAV_MSG.channels[PITCH_CHAN] <<" , " <<"Throttle = " <<MAV_MSG.channels[THROT_CHAN] <<" , " <<"Yaw = " <<MAV_MSG.channels[YAW_CHAN] <<endl;
-		auv_pid_rc_override.publish(MAV_MSG);		
+        //PI::yaw_command()
+        //PI::forward_command()
+        //PI::lateral_command()
+        MAV_MSG.channels[THROT_CHAN] = MID_PWM; 
+		MAV_MSG.channels[YAW_CHAN] = calibrated_controller.yaw_command(); 							
+		MAV_MSG.channels[FORWARD_CHAN] = MID_PWM; 
+		MAV_MSG.channels[LATERAL_CHAN] = MID_PWM;
+        auv_pid_rc_override.publish(MAV_MSG);		
         ros::spinOnce();
         RC_COMM_RATE.sleep();
     }

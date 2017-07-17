@@ -11,18 +11,17 @@
 #include <iostream>
 #include "pid.h"
 
-#define ROLL_CHAN 	0
-#define PITCH_CHAN 	1
 #define THROT_CHAN 	2
 #define YAW_CHAN 	3
-#define MODES_CHAN	4
-#define HIGH_PWM	1900
+#define FORWARD_CHAN 	4
+#define LATERAL_CHAN	5
+#define HIGH_PWM	1800
 #define MID_PWM 	1500
-#define LOW_PWM 	1100
+#define LOW_PWM 	1200
 #define PERCENT_ERR 5
 
 ros::Publisher auv_pid_rc_override;
-ros::Publisher pi_loop_check;
+ros::Publisher pid_loop_check;
 
 int x,y,mode;
 double dist,desiredDist;
@@ -41,54 +40,53 @@ int main( int argc, char** argv ){
     ros::Rate RC_COMM_RATE(45);
     ros::Subscriber sub_obj = nh.subscribe("pi_loop_data", 1000, &poseMessage);
     auv_pid_rc_override = nh.advertise<mavros_msgs::OverrideRCIn>("mavros/rc/override", 1000);
-    pi_loop_check = nh.advertise<std_msgs::Bool>("pi_loop_check",1000);
+    pid_loop_check = nh.advertise<std_msgs::Bool>("pid_loop_check",1000);
     mavros_msgs::OverrideRCIn MAV_MSG;
     int past_mode = 0;
     std_msgs::Bool boolVar;
-    PID roll_controller(1800,1200,1);
-	PID pitch_controller(1800,1200,2);
-	PID throttle_controller(1800,1200,3);
-	PID yaw_controller(1800,1200,4);
+    PID throttle_controller(HIGH_PWM,LOW_PWM,THROT_CHAN);
+	PID yaw_controller(HIGH_PWM,LOW_PWM,YAW_CHAN);
+	PID forward_controller(HIGH_PWM,LOW_PWM,FORWARD_CHAN);
+	PID lateral_controller(HIGH_PWM,LOW_PWM,LATERAL_CHAN);
 	while (ros::ok())
     {
 		if(mode != past_mode)
 		{
-			roll_controller.reset();
-			pitch_controller.reset();
 			throttle_controller.reset();
 			yaw_controller.reset();
+			forward_controller.reset();
+			lateral_controller.reset();
 		}
         //Set PID based on the camera used
         switch(mode)
 		{
 			case 1:					//1 should be forward facing camera 
-                roll_controller.setPID(true,0,0,mode);
-                pitch_controller.setPID(true,desiredDist,dist,mode);
                 throttle_controller.setPID(true,360,y,mode);
                 yaw_controller.setPID(true,640,x,mode);
+                forward_controller.setPID(true,desiredDist,dist,mode);
+                lateral_controller.setPID(true,0,0,mode);
 				break;
 			case 2:					//2 should be downard facing camera
-				roll_controller.setPID(true,320,x,mode);
-                pitch_controller.setPID(true,240,y,mode);
-                throttle_controller.setPID(true,0,0,mode);
+				throttle_controller.setPID(true,0,0,mode);
                 yaw_controller.setPID(true,0,0,mode);
+                forward_controller.setPID(true,240,y,mode);
+                lateral_controller.setPID(true,320,x,mode);
                 break;
 		}
-        MAV_MSG.channels[ROLL_CHAN] = roll_controller.roll_command();
-		MAV_MSG.channels[PITCH_CHAN] = pitch_controller.pitch_command();							
-		MAV_MSG.channels[THROT_CHAN] = throttle_controller.throttle_command();
-		MAV_MSG.channels[YAW_CHAN] = yaw_controller.yaw_command();
-		MAV_MSG.channels[MODES_CHAN] = HIGH_PWM;
+        MAV_MSG.channels[THROT_CHAN] = throttle_controller.throttle_command();
+		MAV_MSG.channels[YAW_CHAN] = yaw_controller.yaw_command();							
+		MAV_MSG.channels[FORWARD_CHAN] = forward_controller.forward_command();
+		MAV_MSG.channels[LATERAL_CHAN] = lateral_controller.lateral_command();
 		auv_pid_rc_override.publish(MAV_MSG);
-        if((roll_controller.getPercentError()<PERCENT_ERR)&&(pitch_controller.getPercentError()<PERCENT_ERR)&&(throttle_controller.getPercentError()<PERCENT_ERR)&&(yaw_controller.getPercentError()<PERCENT_ERR))
+        if((throttle_controller.getPercentError()<PERCENT_ERR)&&(yaw_controller.getPercentError()<PERCENT_ERR)&&(forward_controller.getPercentError()<PERCENT_ERR)&&(lateral_controller.getPercentError()<PERCENT_ERR))
             {
                 boolVar.data=true;
-                pi_loop_check.publish(boolVar);
+                pid_loop_check.publish(boolVar);
             }
         else
             {
                 boolVar.data=false;
-                pi_loop_check.publish(boolVar);
+                pid_loop_check.publish(boolVar);
             }
         ros::spinOnce();
         RC_COMM_RATE.sleep();

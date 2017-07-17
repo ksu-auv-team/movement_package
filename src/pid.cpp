@@ -59,29 +59,7 @@ void PID::setGains()
 {
 	switch(channel)
 	{
-			case 1:							 //roll
-				switch(mode)
-				{
-					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0; kd = 0;
-						break;
-					case 2:					//2 should be downard facing camera
-						kp = 0.9375; ki = 0; kd = 0;
-						break;
-				}
-				break;
-			case 2:							 //pitch
-				switch(mode)
-				{
-					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0; kd = 0;
-						break;
-					case 2:					//2 should be downard facing camera
-						kp = 1.25; ki = 0; kd = 0;
-						break;				
-				}
-				break;
-			case 3:							 //throttle
+			case 2:							 //throttle
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
@@ -92,7 +70,7 @@ void PID::setGains()
 						break;				
 				}
 				break;
-			case 4:							 //yaw
+			case 3:							 //yaw
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
@@ -100,6 +78,28 @@ void PID::setGains()
 						break;
 					case 2:					//2 should be downard facing camera
 						kp = 0; ki = 0; kd = 0;
+						break;				
+				}
+				break;
+			case 4:							 //forward
+				switch(mode)
+				{
+					case 1:					//1 should be forward facing camera 
+						kp = 0; ki = 0; kd = 0;
+						break;
+					case 2:					//2 should be downard facing camera
+						kp = 0.9375; ki = 0; kd = 0;
+						break;
+				}
+				break;
+			case 5:							 //lateral
+				switch(mode)
+				{
+					case 1:					//1 should be forward facing camera 
+						kp = 0; ki = 0; kd = 0;
+						break;
+					case 2:					//2 should be downard facing camera
+						kp = 1.25; ki = 0; kd = 0;
 						break;				
 				}
 				break;
@@ -121,17 +121,18 @@ void PID::setMode(int inMode)
 	mode = inMode;
 }
 
-int PID::roll_command()
+int PID::throttle_command()
 {
 	switch(mode)
 	{
 		case 1:					//1 should be forward facing camera 
-			return 1500;
+			return getCommand();
 			break;
 		case 2:					//2 should be downard facing camera
-			return getCommand();
+			return 1500;
 			break;						
 	}
+
 }
 
 int PID::yaw_command()
@@ -148,21 +149,20 @@ int PID::yaw_command()
 
 }
 
-int PID::throttle_command()
+int PID::forward_command()
 {
 	switch(mode)
 	{
 		case 1:					//1 should be forward facing camera 
-			return getCommand();
+			return 1500;
 			break;
 		case 2:					//2 should be downard facing camera
-			return 1500;
+			return getCommand();
 			break;						
 	}
-
 }
 
-int PID::pitch_command()
+int PID::lateral_command()
 {
 	switch(mode)
 	{
