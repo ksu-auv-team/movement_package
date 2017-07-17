@@ -19,7 +19,7 @@ Purpose: Provides methods and functions for communicating to mavros
 #include <pid.h>
 
 
-class Controller
+class MavComm
 {
     private:
         // Basic NodeHandles
@@ -100,8 +100,8 @@ class Controller
         bool MotorTest(int num_motors);
 
  
-    Controller();
+    MavComm();
 
-    ~Controller();
+    ~MavComm();
 
 };

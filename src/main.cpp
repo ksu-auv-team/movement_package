@@ -4,7 +4,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "movement_package_node");
 
-    auto sub_controller = new Controller();
+    auto sub_controller = new MavComm();
 
     sub_controller->CommInit();
 

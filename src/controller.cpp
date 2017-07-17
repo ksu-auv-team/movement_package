@@ -1,6 +1,6 @@
 #include "controller.h"
 
-Controller::Controller()
+MavComm::MavComm()
     : INFO_RATE(10), FCU_COMM_RATE(45)
 {
     // Publishers
@@ -27,12 +27,12 @@ Controller::Controller()
     _disarmMsg.request.value = false;
 }
 
-Controller::~Controller()
+MavComm::~MavComm()
 {
     DisarmFCU();
 }
 
-bool Controller::CommInit()
+bool MavComm::CommInit()
 {
     if (_streamRateSrv.call(_streamRateMsg))
     {
@@ -60,7 +60,7 @@ bool Controller::CommInit()
     return false;
 }
 
-bool Controller::ArmFCU()
+bool MavComm::ArmFCU()
 {
     if (_armSrv.call(_armMsg))
     {
@@ -78,7 +78,7 @@ bool Controller::ArmFCU()
     return false;
 }
 
-bool Controller::DisarmFCU()
+bool MavComm::DisarmFCU()
 {
     if (_armSrv.call(_disarmMsg))
     {
@@ -96,7 +96,7 @@ bool Controller::DisarmFCU()
     return false;
 }
 
-bool Controller::SetModeAcro()
+bool MavComm::SetModeAcro()
 {
     if (_modeSrv.call(_acroModeMsg))
     {
@@ -114,7 +114,7 @@ bool Controller::SetModeAcro()
     return false;
 }
 
-bool Controller::SetModeStabilize()
+bool MavComm::SetModeStabilize()
 {
     if (_modeSrv.call(_stabilizeModeMsg))
     {
@@ -132,7 +132,7 @@ bool Controller::SetModeStabilize()
     return false;
 }
 
-bool Controller::SetModeManual()
+bool MavComm::SetModeManual()
 {
     if (_modeSrv.call(_manualModeMsg))
     {
@@ -150,7 +150,7 @@ bool Controller::SetModeManual()
     return false;
 }
 
-bool Controller::MotorTest(int num_motors)
+bool MavComm::MotorTest(int num_motors)
 {
     bool _success = this->SetModeManual();
     if (!_success)
