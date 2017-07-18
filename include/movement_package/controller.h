@@ -19,7 +19,11 @@ namespace controller
 
 class Controller
 {
-    private:    
+    public:
+        //@var MavrosCommunicator Object to interface with mavros
+        mavcomm::MavrosCommunicator *MavrosCommunicator;
+
+  
         /**
         Process channel inputs. Should be "hidden" for different controller types.
         Uses MavrosCommunicator->SetOverrideMessage to set rc channel outputs.
@@ -27,11 +31,7 @@ class Controller
 
         @note default behavior is to set all inputs to MID_PWM.
         */
-        void ProcessChannels();
-
-    public:
-        //@var MavrosCommunicator Object to interface with mavros
-        mavcomm::MavrosCommunicator *MavrosCommunicator;
+        virtual void ProcessChannels();
 
 
         /**

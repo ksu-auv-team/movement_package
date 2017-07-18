@@ -19,7 +19,6 @@ Purpose: Provides a class with members for communicating to mavros
 #include <mavros_msgs/ParamSet.h>
 #include <mavros_msgs/StreamRate.h>
 #include <sub_control_definitions.h>
-#include <pid.h>
 
 namespace mavcomm
 {

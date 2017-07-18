@@ -16,8 +16,8 @@ Purpose: Provides definitions for control and communication with mavros/mavlink
 #define FORWARD_CHAN    4
 #define LATERAL_CHAN    5
 
-#define HIGH_PWM	1900
+#define HIGH_PWM	1700
 #define MID_PWM 	1500
-#define LOW_PWM 	1100
+#define LOW_PWM 	1300
 
 #endif
