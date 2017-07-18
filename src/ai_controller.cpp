@@ -51,10 +51,9 @@ void AIController::ProcessChannels()
     }
 
     MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, _throttleController.throttle_command());
-    MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _yawController.throttle_command());
-    MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _forwardController.throttle_command());
-    MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _lateralController.throttle_command());
-    ROS_INFO("%d",  _throttleController.throttle_command());
+    MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _yawController.yaw_command());
+    MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _forwardController.forward_command());
+    MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _lateralController.lateral_command());
     if((_throttleController.getPercentError()<PERCENT_ERROR)&&
         (_yawController.getPercentError()<PERCENT_ERROR)&&
         (_forwardController.getPercentError()<PERCENT_ERROR)&&
