@@ -1,0 +1,41 @@
+
+#ifndef MANUAL_CONTROLLER_DEF
+#define MANUAL_CONTROLLER_DEF
+
+#include "controller.h"
+#include <sensor_msgs/Joy.h>
+
+namespace controller
+{
+
+class ManualController : public Controller
+{
+    private:
+        //@var _n nodehandle for ManualController
+        ros::NodeHandle _n;
+
+        //@var _joyStickSub subscriber for joystick message
+        ros::Subscriber _joyStickSub;
+
+        //@var _joyStickSub subscriber for joystick message
+        sensor_msgs::Joy _joyMsg;
+
+        /**
+        Saves the joystick message into _joyMsg
+        */
+        void JoyStickCallback(const sensor_msgs::Joy& msg);
+
+        /**
+        Sets the Override Message from  _joyMsg.
+        Polymorph from controller
+        */
+        void ProcessChannels();
+
+    public:
+
+    ManualController();
+};
+
+}
+
+#endif

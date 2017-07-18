@@ -27,7 +27,7 @@ namespace mavcomm
 class MavrosCommunicator
 {
     private:
-        //@var _n NodeHandle for ros communication
+        //@var _n NodeHandle for ros communication to mavros
         ros::NodeHandle _n;
 
         //@var INFO_RATE stream rate from FCU

@@ -19,41 +19,40 @@ namespace controller
 
 class Controller
 {
-    private:
-        //@var _mavrosCommunicator Object to interface with mavros
-        auto mavcomm::MavrosCommunicator _mavrosCommunicator;
-
-    
+    private:    
         /**
         Process channel inputs. Should be "hidden" for different controller types.
-        Uses _mavrosCommunicator->SetOverrideMessage to set rc channel outputs.
-        
+        Uses MavrosCommunicator->SetOverrideMessage to set rc channel outputs.
+        Should also manage the mode of the FCU if necessary.
+
         @note default behavior is to set all inputs to MID_PWM.
         */
         void ProcessChannels();
 
     public:
+        //@var MavrosCommunicator Object to interface with mavros
+        mavcomm::MavrosCommunicator *MavrosCommunicator;
+
+
         /**
         Attempts to arm the FCU
 
         @return boolean success
         */
-        bool ArmFCU();
+        bool Arm();
 
 
         /**
-        sets the override message in _mavrosCommunicator to the class's channel vars.
-        */
-        void SetOverrideMessage();
-
-
-        /**
-        Listens for teleop twist message and updates motors accordingly.
+        calls ProcessChannels, Publishes the override message,
+        and updates subscribers.
         */
         void ControlLoop();
     
 
     Controller();
+
+    ~Controller();
+
 
 };//end Controller
 

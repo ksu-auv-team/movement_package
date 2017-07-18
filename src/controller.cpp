@@ -1,37 +1,47 @@
-#include "manual_controller.h"
+#include "controller.h"
 
 using namespace controller;
 
-Controller::Controller()
-    : roll(MID_PWM), pitch(MID_PWM), yaw(MID_PWM), 
-    throttle(MID_PWM), forward(MID_PWM), lateral(MID_PWM)
+Controller::Controller() 
+    : MavrosCommunicator(new  mavcomm::MavrosCommunicator)
 {
-    ;
+    
+}
+
+Controller::~Controller()
+{
+    delete MavrosCommunicator;
 }
 
 void Controller::ProcessChannels()
 {
-    _mavrosCommunicator->SetOverrideMessage();//set all to MID_PWM
+    //ex. set all 6 channels to MID_PWM
+    MavrosCommunicator->SetOverrideMessage(PITCH_CHAN, MID_PWM);
+    MavrosCommunicator->SetOverrideMessage(ROLL_CHAN, MID_PWM);
+    MavrosCommunicator->SetOverrideMessage(YAW_CHAN, MID_PWM);
+    MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, MID_PWM);
+    MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, MID_PWM);
+    MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, MID_PWM);
 }
 
-bool Controller::ArmFCU()
+bool Controller::Arm()
 {
     bool success = false;
     for (int i = 0; i < 20; i++)
     {
-        if (_mavrosCommunicator->ArmFCU())
+        if (MavrosCommunicator->ArmFCU())
         {
             success = true;
             break;
         }
         else
         {
-            ROS_WARN("Attempt %d to arm the FCU failed.", i)
-            ros::Duration(0.5).sleep()
+            ROS_WARN("Attempt %d to arm the FCU failed.", i);
+            ros::Duration(1).sleep();
         }
     }
     if (!success){
-        ROS_WARN("Could not arm FCU.")
+        ROS_WARN("Could not arm FCU.");
     }
     return success;    
 }
@@ -40,8 +50,9 @@ void Controller::ControlLoop()
 {
     while(ros::ok())
     {
-        this->ProcessChannels();
-        _mavrosCommunicator->PublishOverrideMessage();
-        _mavrosCommunicator->FCUCommRate.sleep();
+        this->ProcessChannels(); //do calculations for channels
+        MavrosCommunicator->PublishOverrideMessage();
+        ros::spinOnce();
+        MavrosCommunicator->FCUCommRate.sleep();
     }
 }

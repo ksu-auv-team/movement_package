@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find mavros)/launch/apm2.launch"/>
+    <node name="joystick_node" pkg="joy" type="joy_node" />
+    <node name="manual_control_node" pkg="movement_package" type="manual_control_node"/>
+</launch>
