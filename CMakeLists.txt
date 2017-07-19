@@ -150,6 +150,12 @@ add_executable(ai_control_node src/main_ai.cpp
                src/ai_controller.cpp
                src/pid.cpp)
 
+add_executable(calibration_control_node src/main_calibration.cpp
+               src/mavros_communicator.cpp
+               src/controller.cpp
+               src/calibration_controller.cpp
+               src/pid.cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -161,6 +167,7 @@ add_executable(ai_control_node src/main_ai.cpp
 add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(manual_control_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(ai_control_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(calibration_control_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
@@ -170,6 +177,10 @@ target_link_libraries(manual_control_node
   ${catkin_LIBRARIES}
 )
 target_link_libraries(ai_control_node
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(calibration_control_node
   ${catkin_LIBRARIES}
 )
 
