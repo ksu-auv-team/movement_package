@@ -13,7 +13,7 @@ AIController::AIController()
 
     _setpointReachedPub = _nh.advertise<std_msgs::Bool>("pid_loop_check",10);
 
-    _pastMode = 0;
+    _pastMode = -1;
 }
 
 void AIController::TargetCallback(const std_msgs::Float32MultiArray& msg)
@@ -54,17 +54,19 @@ void AIController::ProcessChannels()
     MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _yawController.yaw_command());
     MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _forwardController.forward_command());
     MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _lateralController.lateral_command());
+    
     if((_throttleController.getPercentError()<PERCENT_ERROR)&&
         (_yawController.getPercentError()<PERCENT_ERROR)&&
         (_forwardController.getPercentError()<PERCENT_ERROR)&&
         (_lateralController.getPercentError()<PERCENT_ERROR))
     {
         _setpointReached.data = true;
-        _setpointReachedPub.publish(_setpointReached);
     }
     else
     {
         _setpointReached.data = false;
-        _setpointReachedPub.publish(_setpointReached);
     }
+
+    _setpointReachedPub.publish(_setpointReached);
+
 }
