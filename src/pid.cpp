@@ -17,7 +17,17 @@ PID::PID(float inTopLimit,float inBottomLimit, float center)
 	_bottomLimit = inBottomLimit;
 	_cl = clock();
 }
-	
+
+PID(int inTopLimit,int inBottomLimit, int kp, int ki, int kd)
+{
+	_center = center;
+	_topLimit = inTopLimit;
+	_bottomLimit = inBottomLimit;
+	_cl = clock();
+	SetGains(kp, ki, kd);
+}
+
+
 float PID::GetError()
 {
 	return _goal-_pose;

@@ -47,4 +47,6 @@ class PID{
 
 	PID();
 	PID(int inTopLimit,int inBottomLimit);
+	PID(int inTopLimit,int inBottomLimit, int kp, int ki, int kd);
+
 };
