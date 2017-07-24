@@ -1,10 +1,13 @@
 
 #ifndef AI_CONTROLLER_DEF
 #define AI_CONTROLLER_DEF
+
 #include "controller.h"
 #include "pid.h"
 #include <std_msgs/Bool.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <math.h>
+
 namespace controller
 {
 class AIController : public Controller
@@ -12,8 +15,8 @@ class AIController : public Controller
     private:
         const int PERCENT_ERROR;
 
-        float _x, _y, _dist, _yOffset;
-        
+        float _controlMsg[4];
+            
         int  _mode, _pastMode;
 
         std_msgs::Bool _setpointReached;

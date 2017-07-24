@@ -13,37 +13,38 @@ The meaning and use of the following variables and functions are explained in th
 implementation "pid.cpp"
 */
 class PID{
-private: 
-	float goal;
-	float pose;
-	int mode; 		
-	int channel; //2-throttle 3-yaw 4-forward 5-lateral
-	bool status;
-	float error;
-	float last_error;
-	long sigma;
-	double kp;
-	double ki;
-	double kd;
-	double dt;
-	clock_t cl; 	
-public:
+	private:
+		float _topLimit;
+		float _bottomLimit;
+		float _center;
+		clock_t _cl;
+
+		float _goal;
+		float _pose;
+		bool _status;
+		float _error;
+		float _lastError;
+		float _sigma;
+		float _command;
+
+		double _kp;
+		double _ki;
+		double _kd;
+
+		double _dt;
+
+		void UpdateSigma();
+
+	public:
+		float GetCommand();
+		void UpdatePID(bool inStatus,float inGoal, float inPose);
+		void SetGains(int kp, int ki, int kd);
+		void SetGoal(float inGoal);
+		void SetPose(float inPose);
+		float GetError();
+		double GetPercentError();
+		void Reset();
+
 	PID();
-	PID(int inTopLimit,int inBottomLimit,int inChannel);
-	float getError();
-	int topLimit;
-	int bottomLimit;
-	int getCommand();
-	void setPID(bool inStatus,float inGoal, float inPose, int inMode);
-	void setSigma();
-	void setGains();
-	void setGoal(float inGoal);
-	void setPose(float inPose);
-	void setMode(int inMode);
-	int throttle_command();
-	int yaw_command();
-	int forward_command();
-	int lateral_command();
-	double getPercentError();
-	void reset();
+	PID(int inTopLimit,int inBottomLimit);
 };

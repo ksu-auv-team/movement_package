@@ -4,10 +4,10 @@ using namespace controller;
 
 AIController::AIController()
         : PERCENT_ERROR(5),
-        _throttleController(HIGH_PWM,LOW_PWM,THROTTLE_CHAN),
-        _yawController(HIGH_PWM,LOW_PWM,YAW_CHAN),
-        _forwardController(HIGH_PWM,LOW_PWM,FORWARD_CHAN),
-        _lateralController(HIGH_PWM,LOW_PWM,LATERAL_CHAN)
+        _throttleController(HIGH_PWM, LOW_PWM),
+        _yawController(HIGH_PWM, LOW_PWM),
+        _forwardController(HIGH_PWM, LOW_PWM),
+        _lateralController(HIGH_PWM, LOW_PWM)
 {
     _targetSub = _nh.subscribe("pi_loop_data", 10, &AIController::TargetCallback, this);
 
@@ -18,35 +18,55 @@ AIController::AIController()
 
 void AIController::TargetCallback(const std_msgs::Float32MultiArray& msg)
 {
-    _x=msg.data[0];
-    _y=msg.data[1];
-    _dist=msg.data[2];
-    _yOffset=msg.data[3];
-    _mode=msg.data[4];
+    _controlMsg[0] = msg.data[0];
+    _controlMsg[1] = msg.data[1];
+    _controlMsg[2] = msg.data[2];
+    _controlMsg[3] = msg.data[3];
+    _mode = round(msg.data[4]);
+}
+
+void AIController::UpdatePIDs()
+{
+    _throttleController.reset();
+    _yawController.reset();
+    _forwardController.reset();
+    _lateralController.reset();
+    switch(_mode)
+    {
+        case 0:
+            //do things
+            break;
+        case 2:
+            //do
+            break;
+    }
 }
 
 void AIController::ProcessChannels()
 {
     if(_mode != _pastMode)
     {
-        _throttleController.reset();
-        _yawController.reset();
-        _forwardController.reset();
-        _lateralController.reset();
+        UpdatePIDs();
     }
     switch(_mode)
     {
+        case 0: //0 should be depth hold,with control channel2 acting as depth 
+            _throttleController.setPID(true, 0, _controlMsg[1], 0);//depth hold, y is depth
+            _yawController.setPID(true, 0, _controlMsg[0], 0);
+            _forwardController.setPID(true, 0, _dist,0);
+            _lateralController.setPID(true, 0, 0, 0);
+            break;
         case 1:	//1 should be forward facing camera 
-            _throttleController.setPID(true, 0, _y+_yOffset, _mode);
-            _yawController.setPID(true, 0, _x, _mode);
-            _forwardController.setPID(true, 0, _dist,_mode);
-            _lateralController.setPID(true, 0, 0, _mode);
+            _throttleController.setPID(true, 0, _y+_yOffset, 1);
+            _yawController.setPID(true, 0, _x, 1);
+            _forwardController.setPID(true, 0, _dist,1);
+            _lateralController.setPID(true, 0, 0, 1);
             break;
         case 2:	//2 should be downard facing camera
-            _throttleController.setPID(true, 0, 0, _mode);
-            _yawController.setPID(true, 0, 0, _mode);
-            _forwardController.setPID(true, 0, _y, _mode);
-            _lateralController.setPID(true, 0, _x, _mode);
+            _throttleController.setPID(true, 0, 0, 2);
+            _yawController.setPID(true, 0, 0, 2);
+            _forwardController.setPID(true, 0, _y, 2);
+            _lateralController.setPID(true, 0, _x, 2);
             break;
     }
 

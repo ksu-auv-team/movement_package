@@ -1,193 +1,94 @@
 #include <iostream>
 #include "pid.h"
 
-//3.1415926
+//#define pid 3.1415926 * d
 
-PID::PID()
+PID::PID(float center)
 {
+	_center = center;
+	_topLimit = std::numeric_limits<float>::max();
+	_bottomLimit = std::numeric_limits<float>::min();
+	_cl = clock();
 }
 
-PID::PID(int inTopLimit,int inBottomLimit,int inChannel)
-{	
-	topLimit = inTopLimit;
-	bottomLimit = inBottomLimit;
-	channel = inChannel;
-	cl = clock();
+PID::PID(float inTopLimit,float inBottomLimit, float center)
+{	_center = center;
+	_topLimit = inTopLimit;
+	_bottomLimit = inBottomLimit;
+	_cl = clock();
 }
 	
-float PID::getError()
+float PID::GetError()
 {
-	return goal-pose;
+	return _goal-_pose;
 }
 
-int PID::getCommand()
+int PID::GetCommand()
 {
-	dt = (clock() - cl)/(double)CLOCKS_PER_SEC;
-	//cout <<dt;
-	error = getError();
-	/*
-		Program integrator anti windup here
-	*/
-	int command = round(1500-(float(kp*error+ki*sigma+kd*(error-last_error)/dt)));
-	if(command>topLimit)
-		command = topLimit;
-	if(command<bottomLimit)
-		command = bottomLimit;
-	setSigma();
-	cl = clock();
+	_dt = (clock() - _cl)/(double)CLOCKS_PER_SEC;
+	_error = GetError();
+
+	//	integrator anti windup here
+	if (_sigma > 500)
+	{
+		_sigma = 0;
+	}
+
+	_command = _center-_kp*_error+_ki*_sigma+_kd*(_error-_lastError)/_dt;
+	if(_command > _topLimit) //threshold the answer
+		_command = _topLimit;
+	if(_command< _bottomLimit)
+		_command = _bottomLimit;
+
+	_lastError = _error;
+	UpdateSigma();
+
+	_cl = clock();
 	return command;
 }
 
-void PID::setPID(bool inStatus,float inGoal, float inPose, int inMode)
+void PID::UpdatePID(bool inStatus,float inGoal, float inPose)
 {
-	status = inStatus;				//inStatus has to be true
-	setGoal(inGoal);
-	setPose(inPose);
-	setMode(inMode);
-	setGains();
+	_status = inStatus;				//inStatus has to be true
+	SetGoal(inGoal);
+	SetPose(inPose);
 }
 
-void PID::setSigma()
+void PID::UpdateSigma()
 {
-	if(status)
-		sigma += error*dt;
+	if(_status)
+		_sigma += _error*_dt;
 	else
-	    sigma = 0;
+	    _sigma = 0;
 }
 
-void PID::setGains()
+void PID::SetGains(int kp, int ki, int kd)
 {
-	switch(channel)
-	{
-			case 2:							 //throttle
-				switch(mode)
-				{
-					case 1:					//1 should be forward facing camera 
-						kp = 600; ki = 0; kd = 0;
-						break;
-					case 2:					//2 should be downard facing camera
-						kp = 0; ki = 0; kd = 0;
-						break;				
-				}
-				break;
-			case 3:							 //yaw
-				switch(mode)
-				{
-					case 1:					//1 should be forward facing camera 
-						kp = 600; ki = 0; kd = 0;
-						break;
-					case 2:					//2 should be downard facing camera
-						kp = 0; ki = 0; kd = 0;
-						break;				
-				}
-				break;
-			case 4:							 //forward
-				switch(mode)
-				{
-					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0; kd = 0;
-						break;
-					case 2:					//2 should be downard facing camera
-						kp = 600; ki = 0; kd = 0;
-						break;
-				}
-				break;
-			case 5:							 //lateral
-				switch(mode)
-				{
-					case 1:					//1 should be forward facing camera 
-						kp = 0; ki = 0; kd = 0;
-						break;
-					case 2:					//2 should be downard facing camera
-						kp = 600; ki = 0; kd = 0;
-						break;				
-				}
-				break;
-	}
+	_kp = kp; _ki = ki; _kd = kd;
 }
 
-void PID::setGoal(float inGoal)
+void PID::SetGoal(float inGoal)
 {
-	goal = inGoal;
+	_goal = inGoal;
 }
 
-void PID::setPose(float inPose)
+void PID::SetPose(float inPose)
 {
-	pose = inPose;
+	_pose = inPose;
 }
 
-void PID::setMode(int inMode)
+double PID::GetPercentError()
 {
-	mode = inMode;
-}
-
-int PID::throttle_command()
-{
-	switch(mode)
-	{
-		case 1:					//1 should be forward facing camera 
-			return getCommand();
-			break;
-		case 2:					//2 should be downard facing camera
-			return 1500;
-			break;						
-	}
-
-}
-
-int PID::yaw_command()
-{
-	switch(mode)
-	{
-		case 1:					//1 should be forward facing camera 
-			return getCommand();
-			break;
-		case 2:					//2 should be downard facing camera
-			return 1500;
-			break;						
-	}
-
-}
-
-int PID::forward_command()
-{
-	switch(mode)
-	{
-		case 1:					//1 should be forward facing camera 
-			return 1500;
-			break;
-		case 2:					//2 should be downard facing camera
-			return getCommand();
-			break;						
-	}
-}
-
-int PID::lateral_command()
-{
-	switch(mode)
-	{
-		case 1:					//1 should be forward facing camera 
-			return 1500;
-			break;
-		case 2:					//2 should be downard facing camera
-			return getCommand();
-			break;						
-	}
-
-}
-
-double PID::getPercentError()
-{
-	if (goal !=0)
-		return 100*abs(getError())/goal;
+	if (_goal !=0)
+		return 100*abs(getError())/_goal;
 	else
 		return 100*abs(getError())/eps;
 }
 
-void PID::reset()
+void PID::Reset()
 {
-	status = false;
-	setSigma();
+	_status = false;
+	UpdateSigma();
 }
 
 
