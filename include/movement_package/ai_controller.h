@@ -13,6 +13,14 @@ namespace controller
 class AIController : public Controller
 {
     private:
+        enum Modes
+        {
+            TRACK_FRONT_AT_DEPTH,
+            TRACK_FRONT,
+            TRACK_BOTTOM_AT_DEPTH,
+            TRACK_BOTTOM
+        };
+
         const int PERCENT_ERROR;
 
         float _controlMsg[4];
@@ -27,9 +35,11 @@ class AIController : public Controller
 
         ros::Publisher _setpointReachedPub;
 
-        PID _throttleController, _yawController, _forwardController, _lateralController;
+        PID *_throttleController, *_yawController, *_forwardController, *_lateralController;
 
         void TargetCallback(const std_msgs::Float32MultiArray& msg);
+
+        void DepthCallback();//TODO: monitor depth
 
     public:
 

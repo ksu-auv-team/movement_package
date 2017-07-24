@@ -3,17 +3,21 @@
 using namespace controller;
 
 AIController::AIController()
-        : PERCENT_ERROR(5),
-        _throttleController(HIGH_PWM, LOW_PWM),
-        _yawController(HIGH_PWM, LOW_PWM),
-        _forwardController(HIGH_PWM, LOW_PWM),
-        _lateralController(HIGH_PWM, LOW_PWM)
+        : PERCENT_ERROR(5)
 {
     _targetSub = _nh.subscribe("pi_loop_data", 10, &AIController::TargetCallback, this);
 
     _setpointReachedPub = _nh.advertise<std_msgs::Bool>("pid_loop_check",10);
 
     _pastMode = -1;
+}
+
+AIController::~AIController()
+{
+    delete _throttleController;
+    delete _yawController;
+    delete _forwardController;
+    delete _lateralController;
 }
 
 void AIController::TargetCallback(const std_msgs::Float32MultiArray& msg)
@@ -27,17 +31,20 @@ void AIController::TargetCallback(const std_msgs::Float32MultiArray& msg)
 
 void AIController::UpdatePIDs()
 {
-    _throttleController.reset();
-    _yawController.reset();
-    _forwardController.reset();
-    _lateralController.reset();
+    delete _throttleController;
+    delete _yawController;
+    delete _forwardController;
+    delete _lateralController;
     switch(_mode)
     {
-        case 0:
-            //do things
+        case TRACK_FRONT_AT_DEPTH:
+            _throttleController = new PID(HIGH_PWM, LOW_PWM, 900, 0, 0);
             break;
-        case 2:
-            //do
+        case TRACK_FRONT:
+            //todo
+            break;
+        case TRACK_BOTTOM_AT_DEPTH:
+            //todo
             break;
     }
 }
@@ -47,22 +54,23 @@ void AIController::ProcessChannels()
     if(_mode != _pastMode)
     {
         UpdatePIDs();
+        _pastMode = _mode;
     }
     switch(_mode)
     {
-        case 0: //0 should be depth hold,with control channel2 acting as depth 
+        case TRACK_FRONT_AT_DEPTH: //0 should be depth hold,with control channel2 acting as depth 
             _throttleController.setPID(true, 0, _controlMsg[1], 0);//depth hold, y is depth
             _yawController.setPID(true, 0, _controlMsg[0], 0);
             _forwardController.setPID(true, 0, _dist,0);
             _lateralController.setPID(true, 0, 0, 0);
             break;
-        case 1:	//1 should be forward facing camera 
+        case TRACK_FRONT:	//1 should be forward facing camera 
             _throttleController.setPID(true, 0, _y+_yOffset, 1);
             _yawController.setPID(true, 0, _x, 1);
             _forwardController.setPID(true, 0, _dist,1);
             _lateralController.setPID(true, 0, 0, 1);
             break;
-        case 2:	//2 should be downard facing camera
+        case TRACK_BOTTOM_AT_DEPTH:	//2 should be downard facing camera
             _throttleController.setPID(true, 0, 0, 2);
             _yawController.setPID(true, 0, 0, 2);
             _forwardController.setPID(true, 0, _y, 2);
