@@ -13,17 +13,26 @@ namespace controller
 class AIController : public Controller
 {
     private:
+        /**
+        0 : TRACK_FRONT_HOLD_DEPTH
+            message[0] = This Mode (0)
+            message[1] = x camera position
+            message[2] = depth(meters)
+            message[3] = forward throttle
+            message[4] = lateral throttle
+        1 : TRACK_FRONT
+        */
         enum Modes
         {
-            TRACK_FRONT_AT_DEPTH,
+            TRACK_FRONT_HOLD_DEPTH,
             TRACK_FRONT,
-            TRACK_BOTTOM_AT_DEPTH,
+            TRACK_BOTTOM_HOLD_DEPTH,
             TRACK_BOTTOM
         };
 
         const int PERCENT_ERROR;
 
-        float _controlMsg[4];
+        float _controlMsg[10];
             
         int  _mode, _pastMode;
 

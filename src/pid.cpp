@@ -9,6 +9,7 @@ PID::PID(float center)
 	_topLimit = std::numeric_limits<float>::max();
 	_bottomLimit = std::numeric_limits<float>::min();
 	_cl = clock();
+	Reset();
 }
 
 PID::PID(float inTopLimit,float inBottomLimit, float center)
@@ -16,15 +17,17 @@ PID::PID(float inTopLimit,float inBottomLimit, float center)
 	_topLimit = inTopLimit;
 	_bottomLimit = inBottomLimit;
 	_cl = clock();
+	Reset();
 }
 
-PID(int inTopLimit,int inBottomLimit, int kp, int ki, int kd)
+PID::PID(int inTopLimit,int inBottomLimit, float center, double kp, double ki, double kd)
 {
 	_center = center;
 	_topLimit = inTopLimit;
 	_bottomLimit = inBottomLimit;
 	_cl = clock();
 	SetGains(kp, ki, kd);
+	Reset();
 }
 
 
@@ -39,15 +42,15 @@ int PID::GetCommand()
 	_error = GetError();
 
 	//	integrator anti windup here
-	if (_sigma > 500)
+	if (abs(_sigma) > _topLimit - _center) // uses top limit.
 	{
 		_sigma = 0;
 	}
 
-	_command = _center-_kp*_error+_ki*_sigma+_kd*(_error-_lastError)/_dt;
-	if(_command > _topLimit) //threshold the answer
+	_command = _center - (_kp*_error + _ki*_sigma + _kd*(_error-_lastError)/_dt);
+	if(_command > _topLimit) //threshold the output
 		_command = _topLimit;
-	if(_command< _bottomLimit)
+	if(_command < _bottomLimit)
 		_command = _bottomLimit;
 
 	_lastError = _error;
@@ -72,7 +75,7 @@ void PID::UpdateSigma()
 	    _sigma = 0;
 }
 
-void PID::SetGains(int kp, int ki, int kd)
+void PID::SetGains(double kp, double ki, double kd)
 {
 	_kp = kp; _ki = ki; _kd = kd;
 }
