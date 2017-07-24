@@ -4,7 +4,7 @@
 #include "controller.h"
 #include "pid.h"
 #include <std_msgs/Bool.h>
-#include <std_msgs/Int32MultiArray.h>
+#include <std_msgs/Float32MultiArray.h>
 namespace controller
 {
 class AIController : public Controller
@@ -12,7 +12,9 @@ class AIController : public Controller
     private:
         const int PERCENT_ERROR;
 
-        int _x, _y, _dist, _yOffset, _mode, _pastMode;
+        float _x, _y, _dist, _yOffset;
+        
+        int  _mode, _pastMode;
 
         std_msgs::Bool _setpointReached;
 
@@ -24,7 +26,7 @@ class AIController : public Controller
 
         PID _throttleController, _yawController, _forwardController, _lateralController;
 
-        void TargetCallback(const std_msgs::Int32MultiArray& msgs);
+        void TargetCallback(const std_msgs::Float32MultiArray& msg);
 
     public:
 

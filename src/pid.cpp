@@ -15,7 +15,7 @@ PID::PID(int inTopLimit,int inBottomLimit,int inChannel)
 	cl = clock();
 }
 	
-double PID::getError()
+float PID::getError()
 {
 	return goal-pose;
 }
@@ -28,7 +28,7 @@ int PID::getCommand()
 	/*
 		Program integrator anti windup here
 	*/
-	int command = 1500-(kp*error+ki*sigma+kd*(error-last_error)/dt);
+	int command = round(1500-(float(kp*error+ki*sigma+kd*(error-last_error)/dt)));
 	if(command>topLimit)
 		command = topLimit;
 	if(command<bottomLimit)
@@ -38,7 +38,7 @@ int PID::getCommand()
 	return command;
 }
 
-void PID::setPID(bool inStatus,int inGoal, int inPose, int inMode)
+void PID::setPID(bool inStatus,float inGoal, float inPose, int inMode)
 {
 	status = inStatus;				//inStatus has to be true
 	setGoal(inGoal);
@@ -63,7 +63,7 @@ void PID::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = 0.8333; ki = 0; kd = 0;
+						kp = 600; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
 						kp = 0; ki = 0; kd = 0;
@@ -74,7 +74,7 @@ void PID::setGains()
 				switch(mode)
 				{
 					case 1:					//1 should be forward facing camera 
-						kp = .46875; ki = 0; kd = 0;
+						kp = 600; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
 						kp = 0; ki = 0; kd = 0;
@@ -88,7 +88,7 @@ void PID::setGains()
 						kp = 0; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 0.9375; ki = 0; kd = 0;
+						kp = 600; ki = 0; kd = 0;
 						break;
 				}
 				break;
@@ -99,19 +99,19 @@ void PID::setGains()
 						kp = 0; ki = 0; kd = 0;
 						break;
 					case 2:					//2 should be downard facing camera
-						kp = 1.25; ki = 0; kd = 0;
+						kp = 600; ki = 0; kd = 0;
 						break;				
 				}
 				break;
 	}
 }
 
-void PID::setGoal(int inGoal)
+void PID::setGoal(float inGoal)
 {
 	goal = inGoal;
 }
 
-void PID::setPose(int inPose)
+void PID::setPose(float inPose)
 {
 	pose = inPose;
 }

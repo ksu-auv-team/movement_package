@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <std_msgs/Int32MultiArray.h>
+#include <std_msgs/Float32MultiArray.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/MultiArrayDimension.h>
 #include <mavros_msgs/OverrideRCIn.h>
@@ -23,10 +23,11 @@
 ros::Publisher auv_pid_rc_override;
 ros::Publisher pid_loop_check;
 
-int x,y,mode;
+float x,y;
+int mode;
 double dist,desiredDist;
 
-void poseMessage(const std_msgs::Int32MultiArray& msg){
+void poseMessage(const std_msgs::Float32MultiArray& msg){
 		x=msg.data[0];
         y=msg.data[1];
         dist=msg.data[2];
@@ -35,7 +36,7 @@ void poseMessage(const std_msgs::Int32MultiArray& msg){
 }
 
 int main( int argc, char** argv ){
-    ros::init(argc, argv,"Leviathan_PI_Controller");
+    ros::init(argc, argv,"Leviathan_PI_Controller_node");
 	ros::NodeHandle nh;
     ros::Rate RC_COMM_RATE(45);
     ros::Subscriber sub_obj = nh.subscribe("pi_loop_data", 1000, &poseMessage);
@@ -61,16 +62,16 @@ int main( int argc, char** argv ){
         switch(mode)
 		{
 			case 1:					//1 should be forward facing camera 
-                throttle_controller.setPID(true,360,y,mode);
-                yaw_controller.setPID(true,640,x,mode);
+                throttle_controller.setPID(true,0,y,mode);
+                yaw_controller.setPID(true,0,x,mode);
                 forward_controller.setPID(true,desiredDist,dist,mode);
                 lateral_controller.setPID(true,0,0,mode);
 				break;
 			case 2:					//2 should be downard facing camera
 				throttle_controller.setPID(true,0,0,mode);
                 yaw_controller.setPID(true,0,0,mode);
-                forward_controller.setPID(true,240,y,mode);
-                lateral_controller.setPID(true,320,x,mode);
+                forward_controller.setPID(true,0,y,mode);
+                lateral_controller.setPID(true,0,x,mode);
                 break;
 		}
         MAV_MSG.channels[THROT_CHAN] = throttle_controller.throttle_command();

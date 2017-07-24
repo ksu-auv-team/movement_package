@@ -16,7 +16,7 @@ AIController::AIController()
     _pastMode = 0;
 }
 
-void AIController::TargetCallback(const std_msgs::Int32MultiArray& msg)
+void AIController::TargetCallback(const std_msgs::Float32MultiArray& msg)
 {
     _x=msg.data[0];
     _y=msg.data[1];
@@ -37,16 +37,16 @@ void AIController::ProcessChannels()
     switch(_mode)
     {
         case 1:	//1 should be forward facing camera 
-            _throttleController.setPID(true, 360, _y+_yOffset, _mode);
-            _yawController.setPID(true, 640, _x, _mode);
+            _throttleController.setPID(true, 0, _y+_yOffset, _mode);
+            _yawController.setPID(true, 0, _x, _mode);
             _forwardController.setPID(true, 0, _dist,_mode);
             _lateralController.setPID(true, 0, 0, _mode);
             break;
         case 2:	//2 should be downard facing camera
             _throttleController.setPID(true, 0, 0, _mode);
             _yawController.setPID(true, 0, 0, _mode);
-            _forwardController.setPID(true, 240, _y, _mode);
-            _lateralController.setPID(true, 320, _x, _mode);
+            _forwardController.setPID(true, 0, _y, _mode);
+            _lateralController.setPID(true, 0, _x, _mode);
             break;
     }
 

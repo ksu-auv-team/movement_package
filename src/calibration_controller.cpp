@@ -11,7 +11,7 @@ CalibrationController::CalibrationController()
 
 }
 
-void CalibrationController::TargetCallback(const std_msgs::Int32MultiArray& msg)
+void CalibrationController::TargetCallback(const std_msgs::Float32MultiArray& msg)
 {
     _x=msg.data[0];
     _y=msg.data[1];
@@ -27,7 +27,7 @@ void CalibrationController::ProcessChannels()
     //inPose is the location of the tracked object the x and y coordinates are treated in the callback function above
     //inMode is for the camera used 1- Forward Facing Camera 2- Downward Facin Camera
     
-    _calibrationController.setPID(true, 320, _x, _mode); 
+    _calibrationController.setPID(true, 0, _x, _mode); 
 
     //Set the mavros commands here
     //We could use the PI::getCommand() function but we'll use the other control commands instead

@@ -3,7 +3,7 @@
 #define AI_CONTROLLER_DEF
 #include "controller.h"
 #include "pid.h"
-#include <std_msgs/Int32MultiArray.h>
+#include <std_msgs/Float32MultiArray.h>
 
 namespace controller
 {
@@ -11,7 +11,9 @@ class CalibrationController : public Controller
 {
     private:
 
-        int _x, _y, _dist, _mode;
+        float _x, _y, _dist; 
+        
+        int _mode;
 
         ros::NodeHandle _nh;
 
@@ -19,7 +21,7 @@ class CalibrationController : public Controller
 
         PID _calibrationController;
 
-        void TargetCallback(const std_msgs::Int32MultiArray& msgs);
+        void TargetCallback(const std_msgs::Float32MultiArray& msgs);
 
     public:
 
