@@ -43,6 +43,28 @@ bool Controller::Arm()
     if (!success){
         ROS_WARN("Could not arm FCU.");
     }
+  return success;    
+}
+
+bool Controller::Disarm()
+{
+    bool success = false;
+    for (int i = 0; i < 20; i++)
+    {
+        if (MavrosCommunicator->DisarmFCU())
+        {
+            success = true;
+            break;
+        }
+        else
+        {
+            ROS_WARN("Attempt %d to disarm the FCU failed.", i);
+            ros::Duration(1).sleep();
+        }
+    }
+    if (!success){
+        ROS_ERROR("Could not disarm FCU.");
+    }
     return success;    
 }
 
