@@ -8,6 +8,8 @@ ManualController::ManualController()
     
     _n.setParam("joy_node/dev", "/dev/input/js0");
 
+    _joyMsg.axes={-0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    _joyMsg.buttons={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 }
 
 void ManualController::JoyStickCallback(const sensor_msgs::Joy& msg)

@@ -41,6 +41,12 @@ class Controller
         */
         bool Arm();
 
+        /**
+        Attempts to disarm the FCU
+
+        @return boolean success
+        */
+        bool Disarm();
 
         /**
         calls ProcessChannels, Publishes the override message,
