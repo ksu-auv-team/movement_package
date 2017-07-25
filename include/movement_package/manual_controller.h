@@ -11,6 +11,9 @@ namespace controller
 class ManualController : public Controller
 {
     private:
+        bool _manualArmed;
+        double _lastMsgRecieved;
+
         //@var _n nodehandle for ManualController
         ros::NodeHandle _n;
 
@@ -30,6 +33,11 @@ class ManualController : public Controller
         Polymorph from controller
         */
         void ProcessChannels();
+
+        /**
+        Manages armed status
+        */
+        void SafeArm();
 
     public:
 

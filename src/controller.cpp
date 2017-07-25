@@ -7,13 +7,14 @@ Controller::Controller()
 {
     while(!MavrosCommunicator->CommInit())
     {
-        ROS_INFO("Communication initialization failed. Retrying.")
+        ROS_INFO("Communication initialization failed. Retrying.");
         ros::Duration(0.5).sleep();
     }
 }
 
 Controller::~Controller()
 {
+    this->Disarm();
     delete MavrosCommunicator;
 }
 
@@ -63,7 +64,7 @@ bool Controller::Disarm()
         else
         {
             ROS_WARN("Attempt %d to disarm the FCU failed.", i);
-            ros::Duration(1).sleep();
+            ros::Duration(0.25).sleep();
         }
     }
     if (!success){

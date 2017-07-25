@@ -10,10 +10,6 @@ int main(int argc, char **argv)
 
     auto manualController = new controller::ManualController();
 
-    manualController->Arm();
-
-    ROS_INFO("ARM SUCCESS !!    ");
-
     try
     {
         manualController->ControlLoop();
