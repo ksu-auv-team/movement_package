@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cmath>
 #include<math.h>
+#include <limits>
 
 using namespace std;
 
@@ -38,7 +39,7 @@ class PID{
 	public:
 		float GetCommand();
 		void UpdatePID(bool inStatus,float inGoal, float inPose);
-		void SetGains(int kp, int ki, int kd);
+		void SetGains(double kp, double ki, double kd);
 		void SetGoal(float inGoal);
 		void SetPose(float inPose);
 		float GetError();
@@ -46,7 +47,8 @@ class PID{
 		void Reset();
 
 	PID();
-	PID(int inTopLimit,int inBottomLimit);
-	PID(int inTopLimit,int inBottomLimit, int kp, int ki, int kd);
-
+	PID(float center);
+	PID(float inTopLimit,float inBottomLimit, float center);
+	PID(int inTopLimit,int inBottomLimit, float center, double kp, double ki, double kd);
+	
 };

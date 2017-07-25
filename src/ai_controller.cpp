@@ -3,9 +3,15 @@
 using namespace controller;
 
 AIController::AIController()
-        : PERCENT_ERROR(5)
+        : PERCENT_ERROR(5), _pressureCollected(false)
 {
+    _startTime = ros::Time::now().toSec();
+
+    _surfacePressure = 101325; //1 atm
+
     _targetSub = _nh.subscribe("pi_loop_data", 10, &AIController::TargetCallback, this);
+
+    _pressureSub = _nh.subscribe("/mavros/imu/atm_pressure", 1, &AIController::DepthCallback, this); //subscribe to arduino topic
 
     _setpointReachedPub = _nh.advertise<std_msgs::Bool>("pid_loop_check",10);
 
@@ -23,12 +29,53 @@ AIController::~AIController()
 void AIController::TargetCallback(const std_msgs::Float32MultiArray& msg)
 {
     _mode = round(msg.data[0]);
-    for(int i(1); i < message.data.size(); i++)
+    for(int i(1); i < msg.data.size(); i++)
         _controlMsg[i-1] = msg.data[i];
     
 }
 
-void AIController::UpdatePIDs()
+void AIController::DepthCallback(const sensor_msgs::FluidPressure& msg)
+{
+
+    double currentTime = ros::Time::now().toSec();
+
+	if ( (currentTime - _startTime) < 5.0d )
+	{
+		_pressureData.push_back(msg.fluid_pressure);
+		
+	}
+    //average the data then set pressure_detected so it never averages again
+    else if ( !_pressureCollected )
+	{
+        ROS_INFO("Finished collecting atmospheric pressure");
+        //These are in Pa
+	    //1 ATM = surface_pressure Pa
+	    //collect data for first five seconds;
+		
+        int samplesize = _pressureData.size();
+		
+        if (samplesize == 0)
+        {
+			 ROS_WARN("NO Presssure Data Collected During First 3 Secs, defaulting to 1ATM");
+        }
+        else
+		{
+			_surfacePressure = 0;
+			
+            for (int i = 0; i < samplesize; i++)
+            {
+				_surfacePressure += _pressureData[i]/samplesize;
+            }
+        }
+		_pressureCollected = true;
+    } //calculated average
+    else
+    {
+        //calculate current depth
+        _currentDepth = (msg.fluid_pressure-_surfacePressure)*1.019744/10000;
+    }
+}
+void AIController::NewMode()
 {
     delete _throttleController;
     delete _yawController;
@@ -66,43 +113,31 @@ void AIController::ProcessChannels()
 {
     if(_mode != _pastMode)
     {
-        UpdatePIDs();
+        NewMode();
         _pastMode = _mode;
     }
     switch(_mode)
     {
-        case TRACK_FRONT_AT_DEPTH: //0 should be depth hold,with control channel2 acting as depth 
-            _throttleController->UpdatePID(true, 0, _controlMsg[1], 0);//depth hold, y is depth
-            _yawController.setPID(true, _controlMsg[2], _currentDepth, 0);
-            MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, _throttleController->throttle_command());
-            MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _yawController->yaw_command());
+        case TRACK_FRONT_HOLD_DEPTH: //0 should be depth hold,with control channel2 acting as depth 
+            _throttleController->UpdatePID(true, 0, _controlMsg[1]);//depth hold, y is depth
+            _yawController->UpdatePID(true, _controlMsg[2], _currentDepth);
+            MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, _throttleController->GetCommand());
+            MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _yawController->GetCommand());
             MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _controlMsg[3]);
             MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _controlMsg[4]);
             break;
         case TRACK_FRONT:	//1 should be forward facing camera 
-            _throttleController.setPID(true, 0, _y+_yOffset, 1);
-            _yawController.setPID(true, 0, _x, 1);
-            _forwardController.setPID(true, 0, _dist,1);
-            _lateralController.setPID(true, 0, 0, 1);
-            MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, _throttleController->throttle_command());
-            MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _yawController.yaw_command());
-            MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _forwardController.forward_command());
-            MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _lateralController.lateral_command());
-            break;
-        case TRACK_BOTTOM_AT_DEPTH:	//2 should be downard facing camera
-            _throttleController.setPID(true, 0, 0, 2);
-            _yawController.setPID(true, 0, 0, 2);
-            _forwardController.setPID(true, 0, _y, 2);
-            _lateralController.setPID(true, 0, _x, 2);
+           break;
+        case TRACK_BOTTOM_HOLD_DEPTH:	//2 should be downard facing camera
             break;
     }
 
     
     
-    if((_throttleController.getPercentError()<PERCENT_ERROR)&&
-        (_yawController.getPercentError()<PERCENT_ERROR)&&
-        (_forwardController.getPercentError()<PERCENT_ERROR)&&
-        (_lateralController.getPercentError()<PERCENT_ERROR))
+    if((_throttleController->GetPercentError()<PERCENT_ERROR)&&
+        (_yawController->GetPercentError()<PERCENT_ERROR)&&
+        (_forwardController->GetPercentError()<PERCENT_ERROR)&&
+        (_lateralController->GetPercentError()<PERCENT_ERROR))
     {
         _setpointReached.data = true;
     }

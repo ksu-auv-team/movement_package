@@ -36,7 +36,7 @@ float PID::GetError()
 	return _goal-_pose;
 }
 
-int PID::GetCommand()
+float PID::GetCommand()
 {
 	_dt = (clock() - _cl)/(double)CLOCKS_PER_SEC;
 	_error = GetError();
@@ -57,7 +57,7 @@ int PID::GetCommand()
 	UpdateSigma();
 
 	_cl = clock();
-	return command;
+	return _command;
 }
 
 void PID::UpdatePID(bool inStatus,float inGoal, float inPose)
@@ -93,9 +93,9 @@ void PID::SetPose(float inPose)
 double PID::GetPercentError()
 {
 	if (_goal !=0)
-		return 100*abs(getError())/_goal;
+		return 100*abs(GetError())/_goal;
 	else
-		return 100*abs(getError())/eps;
+		return 100*abs(GetError())/eps;
 }
 
 void PID::Reset()
