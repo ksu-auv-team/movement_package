@@ -3,11 +3,10 @@
 using namespace controller;
 
 AIController::AIController()
-        : PERCENT_ERROR(5), _pressureCollected(false)
+        : PERCENT_ERROR(5), _pressureCollected(false),
+        _surfacePressure(101325)//1 atm
 {
     _startTime = ros::Time::now().toSec();
-
-    _surfacePressure = 101325; //1 atm
 
     _targetSub = _nh.subscribe("pi_loop_data", 10, &AIController::TargetCallback, this);
 

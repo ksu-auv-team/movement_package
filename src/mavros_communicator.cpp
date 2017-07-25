@@ -86,6 +86,7 @@ bool MavrosCommunicator::CommInit()
     else
     {
         ROS_WARN("Failed to use mavros/set_stream_rate service. Rate not set.");
+        return false;
     }
 
     if (_paramSrv.call(_sysidMsg))

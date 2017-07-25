@@ -5,7 +5,11 @@ using namespace controller;
 Controller::Controller() 
     : MavrosCommunicator(new  mavcomm::MavrosCommunicator)
 {
-    
+    while(!MavrosCommunicator->CommInit())
+    {
+        ROS_INFO("Communication initialization failed. Retrying.")
+        ros::Duration(0.5).sleep();
+    }
 }
 
 Controller::~Controller()
