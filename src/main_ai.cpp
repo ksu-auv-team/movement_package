@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 
     auto aiController = new controller::AIController();
 
-    aiController->Arm();
+    //aiController->Arm();
 
     aiController->ControlLoop();
 

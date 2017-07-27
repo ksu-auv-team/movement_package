@@ -81,5 +81,19 @@ void Controller::ControlLoop()
         MavrosCommunicator->PublishOverrideMessage();
         ros::spinOnce();
         MavrosCommunicator->FCUCommRate.sleep();
+        
     }
+}
+
+void Controller::Sequencing()
+{
+    MavrosCommunicator->SetModeManual();
+    for(int i = 1475; i <= 1525; i++)
+    {
+        MavrosCommunicator->SetOverrideMessage(YAW_CHAN, i);
+        MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, i);
+        MavrosCommunicator->PublishOverrideMessage();
+        ros::spinOnce();
+        MavrosCommunicator->FCUCommRate.sleep();
+    }    
 }
