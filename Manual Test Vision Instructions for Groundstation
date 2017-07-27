@@ -1,6 +1,6 @@
 tky
 
-rosrun yolo compressed_image_repeater /left/image_raw
+rosrun yolo compressed_repeater /left/image_raw
 
 when pixhawk is connected on the other port
 roslaunch mavros apm2.launch fcu_url:=/dev/ttyACM1:57600
