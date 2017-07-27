@@ -15,6 +15,10 @@ AIController::AIController()
     _setpointReachedPub = _nh.advertise<std_msgs::Bool>("pid_loop_check",10);
 
     _pastMode = -1;
+
+    Arm();
+
+    Sequencing();
 }
 
 AIController::~AIController()
@@ -131,20 +135,20 @@ void AIController::ProcessChannels()
             break;
     }
 
+    ROS_INFO("HEEEEEEERE");
     
+    // if((_throttleController->GetPercentError()<PERCENT_ERROR)&&
+    //     (_yawController->GetPercentError()<PERCENT_ERROR)&&
+    //     (_forwardController->GetPercentError()<PERCENT_ERROR)&&
+    //     (_lateralController->GetPercentError()<PERCENT_ERROR))
+    // {
+    //     _setpointReached.data = true;
+    // }
+    // else
+    // {
+    //     _setpointReached.data = false;
+    // }
     
-    if((_throttleController->GetPercentError()<PERCENT_ERROR)&&
-        (_yawController->GetPercentError()<PERCENT_ERROR)&&
-        (_forwardController->GetPercentError()<PERCENT_ERROR)&&
-        (_lateralController->GetPercentError()<PERCENT_ERROR))
-    {
-        _setpointReached.data = true;
-    }
-    else
-    {
-        _setpointReached.data = false;
-    }
-
-    _setpointReachedPub.publish(_setpointReached);
+    // _setpointReachedPub.publish(_setpointReached);
 
 }

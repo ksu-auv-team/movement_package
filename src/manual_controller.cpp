@@ -13,6 +13,10 @@ ManualController::ManualController()
     _joyMsg.axes = {-0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     _joyMsg.buttons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+    Arm();
+
+    Sequencing();
+
     this->Disarm();
     _manualArmed = false;
 }

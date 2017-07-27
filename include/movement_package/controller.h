@@ -54,7 +54,12 @@ class Controller
         and updates subscribers.
         */
         void ControlLoop();
-    
+
+        /**
+        sequence to arm the esc
+        */    
+        void Sequencing();
+
 
     Controller();
 
