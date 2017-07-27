@@ -4,8 +4,5 @@
 
 	<!--START MANUAL CONTROL NODE-->
     <node name="manual_control_node" pkg="movement_package" type="manual_control_node" output="screen"/>>
-    
-    <!--START JOYSTICK NODE-->
-    <node name="joystick_node" pkg="joy" type="joy_node" />
  
 </launch>

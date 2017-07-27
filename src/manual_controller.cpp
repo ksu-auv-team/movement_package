@@ -26,7 +26,6 @@ void ManualController::JoyStickCallback(const sensor_msgs::Joy& msg)
 void ManualController::SafeArm()
 {
     int messageTime(ros::Time::now().toSec() - _lastMsgRecieved);
-    ROS_INFO("%d", messageTime);
     if (!_manualArmed) //not armed
     {
         if (_joyMsg.buttons[9] == 1 && messageTime < 10) //trigger pressed
