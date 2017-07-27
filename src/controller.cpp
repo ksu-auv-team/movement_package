@@ -10,6 +10,7 @@ Controller::Controller()
         ROS_INFO("Communication initialization failed. Retrying.");
         ros::Duration(0.5).sleep();
     }
+    this->Disarm();
 }
 
 Controller::~Controller()
@@ -48,7 +49,8 @@ bool Controller::Arm()
     if (!success){
         ROS_WARN("Could not arm FCU.");
     }
-  return success;    
+    Armed = success;
+    return success;    
 }
 
 bool Controller::Disarm()
@@ -70,6 +72,7 @@ bool Controller::Disarm()
     if (!success){
         ROS_ERROR("Could not disarm FCU.");
     }
+    Armed = !success;
     return success;    
 }
 
@@ -95,5 +98,7 @@ void Controller::Sequencing()
         MavrosCommunicator->PublishOverrideMessage();
         ros::spinOnce();
         MavrosCommunicator->FCUCommRate.sleep();
-    }    
+    }
+    MavrosCommunicator->SetOverrideMessage(YAW_CHAN, MID_PWM);
+        MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, MID_PWM);
 }

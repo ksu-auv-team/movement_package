@@ -23,6 +23,8 @@ class Controller
         //@var MavrosCommunicator Object to interface with mavros
         mavcomm::MavrosCommunicator *MavrosCommunicator;
 
+        bool Armed;
+
         //TODO : ground stateion connected subscriber, disarm if not subscribed
   
         /**

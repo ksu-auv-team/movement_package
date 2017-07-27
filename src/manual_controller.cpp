@@ -4,8 +4,6 @@ using namespace controller;
 
 ManualController::ManualController()
 {
-    MavrosCommunicator->SetModeStabilize();
-
     _joyStickSub = _n.subscribe("joy", 10, &ManualController::JoyStickCallback, this);
     
     _n.setParam("joy_node/dev", "/dev/input/js0");
@@ -13,12 +11,14 @@ ManualController::ManualController()
     _joyMsg.axes = {-0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     _joyMsg.buttons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    Arm();
+    this->Arm();
 
-    Sequencing();
+    this->Sequencing();
 
     this->Disarm();
     _manualArmed = false;
+
+    MavrosCommunicator->SetModeStabilize();
 }
 
 void ManualController::JoyStickCallback(const sensor_msgs::Joy& msg)
