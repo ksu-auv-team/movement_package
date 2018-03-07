@@ -91,7 +91,7 @@ bool MavrosCommunicator::CommInit()
 
     if (_paramSrv.call(_sysidMsg))
     {
-        if (_sysidMsg.response.success)
+        if (_sysidMsg.response.mode_sent)
         {
             ROS_INFO("Set SYSID_MYGCS Succeeded.");
         }
@@ -99,7 +99,7 @@ bool MavrosCommunicator::CommInit()
         {
             ROS_WARN("Set SYSID_MYGCS Failed.");
         }
-        return _sysidMsg.response.success;
+        return _sysidMsg.response.mode_sent;
     }
 
     ROS_WARN("Failed to use mavros/param/set service. SYSID_MYGCS not set. RC Override will FAIL.");
@@ -110,7 +110,7 @@ bool MavrosCommunicator::ArmFCU()
 {
     if (_armSrv.call(_armMsg))
     {
-        if (_armMsg.response.success)
+        if (_armMsg.response.mode_sent)
         {
             ROS_INFO("Arm succeeded.");
         }
@@ -118,7 +118,7 @@ bool MavrosCommunicator::ArmFCU()
         {
             ROS_WARN("Arm failed.");
         }
-        return _armMsg.response.success;
+        return _armMsg.response.mode_sent;
     }
     ROS_WARN("Failed to use /mavros/cmd/arming serivce. Arm failed.");
     return false;
@@ -128,7 +128,7 @@ bool MavrosCommunicator::DisarmFCU()
 {
     if (_armSrv.call(_disarmMsg))
     {
-        if (_disarmMsg.response.success)
+        if (_disarmMsg.response.mode_sent)
         {
             ROS_INFO("Disarm succeeded.");
         }
@@ -136,7 +136,7 @@ bool MavrosCommunicator::DisarmFCU()
         {
             ROS_WARN("Disarm failed.");
         }
-        return _disarmMsg.response.success;
+        return _disarmMsg.response.mode_sent;
     }
     ROS_WARN("Failed to use /mavros/cmd/arming serivce. Disarm failed.");
     return false;
@@ -146,7 +146,7 @@ bool MavrosCommunicator::SetModeAcro()
 {
     if (_modeSrv.call(_acroModeMsg))
     {
-        if (_acroModeMsg.response.success)
+        if (_acroModeMsg.response.mode_sent)
         {
             ROS_INFO("Set mode to ACRO succeeded.");
         }
@@ -154,7 +154,7 @@ bool MavrosCommunicator::SetModeAcro()
         {
             ROS_WARN("Set mode to ACRO failed.");
         }
-        return _acroModeMsg.response.success;
+        return _acroModeMsg.response.mode_sent;
     }
     ROS_WARN("Failed to use /mavros/set_mode serivce. Set mode to ACRO failed.");
     return false;
@@ -164,7 +164,7 @@ bool MavrosCommunicator::SetModeStabilize()
 {
     if (_modeSrv.call(_stabilizeModeMsg))
     {
-        if (_stabilizeModeMsg.response.success)
+        if (_stabilizeModeMsg.response.mode_sent)
         {
             ROS_INFO("Set mode to STABILIZE succeeded.");
         }
@@ -172,7 +172,7 @@ bool MavrosCommunicator::SetModeStabilize()
         {
             ROS_WARN("Set mode to STABILIZE failed.");
         }
-        return _stabilizeModeMsg.response.success;
+        return _stabilizeModeMsg.response.mode_sent;
     }
     ROS_WARN("Failed to use /mavros/set_mode serivce. Set mode to STABILIZE failed.");
     return false;
@@ -182,7 +182,7 @@ bool MavrosCommunicator::SetModeManual()
 {
     if (_modeSrv.call(_manualModeMsg))
     {
-        if (_manualModeMsg.response.success)
+        if (_manualModeMsg.response.mode_sent)
         {
             ROS_INFO("Set mode to MANUAL succeeded.");
         }
@@ -190,7 +190,7 @@ bool MavrosCommunicator::SetModeManual()
         {
             ROS_WARN("Set mode to MANUAL failed.");
         }
-        return _manualModeMsg.response.success;
+        return _manualModeMsg.response.mode_sent;
     }
     ROS_WARN("Failed to use /mavros/set_mode serivce. Set mode to MANUAL failed.");
     return false;
@@ -198,8 +198,8 @@ bool MavrosCommunicator::SetModeManual()
 
 bool MavrosCommunicator::MotorTest()
 {
-    bool _success = this->SetModeManual();
-    if (!_success)
+    bool _mode_sent = this->SetModeManual();
+    if (!_mode_sent)
     {
         ROS_ERROR("Exiting MotorTest. See previous warning.");
         return false;
