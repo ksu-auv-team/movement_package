@@ -91,7 +91,7 @@ bool MavrosCommunicator::CommInit()
 
     if (_paramSrv.call(_sysidMsg))
     {
-        if (_sysidMsg.response.mode_sent)
+        if (_sysidMsg.response.success)
         {
             ROS_INFO("Set SYSID_MYGCS Succeeded.");
         }
@@ -99,7 +99,7 @@ bool MavrosCommunicator::CommInit()
         {
             ROS_WARN("Set SYSID_MYGCS Failed.");
         }
-        return _sysidMsg.response.mode_sent;
+        return _sysidMsg.response.success;
     }
 
     ROS_WARN("Failed to use mavros/param/set service. SYSID_MYGCS not set. RC Override will FAIL.");
@@ -110,7 +110,7 @@ bool MavrosCommunicator::ArmFCU()
 {
     if (_armSrv.call(_armMsg))
     {
-        if (_armMsg.response.mode_sent)
+        if (_armMsg.response.success)
         {
             ROS_INFO("Arm succeeded.");
         }
@@ -118,7 +118,7 @@ bool MavrosCommunicator::ArmFCU()
         {
             ROS_WARN("Arm failed.");
         }
-        return _armMsg.response.mode_sent;
+        return _armMsg.response.success;
     }
     ROS_WARN("Failed to use /mavros/cmd/arming serivce. Arm failed.");
     return false;
@@ -128,7 +128,7 @@ bool MavrosCommunicator::DisarmFCU()
 {
     if (_armSrv.call(_disarmMsg))
     {
-        if (_disarmMsg.response.mode_sent)
+        if (_disarmMsg.response.success)
         {
             ROS_INFO("Disarm succeeded.");
         }
@@ -136,7 +136,7 @@ bool MavrosCommunicator::DisarmFCU()
         {
             ROS_WARN("Disarm failed.");
         }
-        return _disarmMsg.response.mode_sent;
+        return _disarmMsg.response.success;
     }
     ROS_WARN("Failed to use /mavros/cmd/arming serivce. Disarm failed.");
     return false;
@@ -198,8 +198,8 @@ bool MavrosCommunicator::SetModeManual()
 
 bool MavrosCommunicator::MotorTest()
 {
-    bool _mode_sent = this->SetModeManual();
-    if (!_mode_sent)
+    bool _success = this->SetModeManual();
+    if (!_success)
     {
         ROS_ERROR("Exiting MotorTest. See previous warning.");
         return false;

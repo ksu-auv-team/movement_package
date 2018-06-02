@@ -30,34 +30,23 @@ void ManualController::JoyStickCallback(const sensor_msgs::Joy& msg)
 void ManualController::SafeArm()
 {
     int messageTime(ros::Time::now().toSec() - _lastMsgRecieved);
-    if (!_manualArmed) //not armed
+    if (_joyMsg.axes[2] < -0.5 && messageTime < 10 && !_manualArmed) //trigger pressed
     {
-        if (_joyMsg.buttons[9] == 1 && messageTime < 10) //trigger pressed
-        {
-            this->Arm();
-            _manualArmed = true;
-        }
+        this->Arm();
+        _manualArmed = true;
     }
-    else //armed
+    else if (_joyMsg.axes[2] >= -0.5 && messageTime >= 10)//armed
     {
-        if (_joyMsg.buttons[9] != 1) //trigger not pressed
-        {
-            this->Disarm();
-            _manualArmed = false;
-        }
-        else if (messageTime > 10)
-        {
-            this->Disarm();
-            _manualArmed = false;
-        }
+        this->Disarm();
+        _manualArmed = false;
     }
 }
 
 void ManualController::ProcessChannels()
 {
     SafeArm();//trigger-arm
-    MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _joyMsg.axes[2]*-500 + MID_PWM);//right stick left-right
-    MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _joyMsg.axes[3]*500 + MID_PWM);//right stick up-down
+    MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _joyMsg.axes[3]*-500 + MID_PWM);//right stick left-right
+    MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _joyMsg.axes[4]*500 + MID_PWM);//right stick up-down
     MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, _joyMsg.axes[1]*500 + MID_PWM);//left stick up-down
     MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _joyMsg.axes[0]*-500 + MID_PWM);//left stick left-right
 }
