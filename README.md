@@ -28,7 +28,7 @@ source ~/.bashrc
 
 ```bash
 # install ros packages
-sudo apt -y install ros-kinetic-cv-bridge ros-kinetic-image-transport ros-kinetic-mavlink ros-kinetic-mavros ros-kinetic-mavros-msgs \
+sudo apt -y install ros-kinetic-mavlink ros-kinetic-mavros ros-kinetic-mavros-msgs \
     ros-kinetic-cmake-modules ros-kinetic-control-toolbox  ros-kinetic-joy
 ```
 
