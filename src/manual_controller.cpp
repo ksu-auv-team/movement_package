@@ -30,15 +30,25 @@ void ManualController::JoyStickCallback(const sensor_msgs::Joy& msg)
 void ManualController::SafeArm()
 {
     int messageTime(ros::Time::now().toSec() - _lastMsgRecieved);
-    if (_joyMsg.axes[2] < -0.5 && messageTime < 10 && !_manualArmed) //trigger pressed
-    {
-        this->Arm();
-        _manualArmed = true;
+    if (!_manualArmed){
+        if (_joyMsg.axes[2] < -0.5 && messageTime < 3)//trigger pressed
+        {
+            this->Arm();
+            _manualArmed = true;
+        }
     }
-    else if (_joyMsg.axes[2] >= -0.5 && messageTime >= 10)//armed
+    else //armed 
+    {
+    if (_joyMsg.axes[2] >= -0.5) // trigger not pressed
+     {
+        this->Disarm();
+        _manualArmed = false;
+    }
+    else if(messageTime > 3)
     {
         this->Disarm();
         _manualArmed = false;
+    }
     }
 }
 
