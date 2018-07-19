@@ -91,7 +91,7 @@ void Controller::ControlLoop()
 void Controller::Sequencing()
 {
     MavrosCommunicator->SetModeManual();
-    for(int i = 1470; i <= 1630; i++)
+    for(int i = 1440; i <= 1640; i++)
     {
         MavrosCommunicator->SetOverrideMessage(YAW_CHAN, i);
         MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, i);
