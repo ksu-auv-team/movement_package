@@ -18,7 +18,7 @@ ManualController::ManualController()
     this->Disarm();
     _manualArmed = false;
 
-    MavrosCommunicator->SetModeStabilize();
+    MavrosCommunicator->SetModeAltHold();
 }
 
 void ManualController::JoyStickCallback(const sensor_msgs::Joy& msg)
