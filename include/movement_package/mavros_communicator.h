@@ -34,7 +34,7 @@ class MavrosCommunicator
 
         // Service Params for setting FCU modes, states, params, etc.
         ros::ServiceClient _streamRateSrv, _modeSrv, _armSrv, _paramSrv;
-        mavros_msgs::SetMode _stabilizeModeMsg, _altHoldModeMsg, _acroModeMsg, _manualModeMsg;
+        mavros_msgs::SetMode _stabilizeModeMsg, _acroModeMsg, _manualModeMsg;
         mavros_msgs::CommandBool _armMsg, _disarmMsg;
         mavros_msgs::ParamSet _sysidMsg;
         mavros_msgs::StreamRate _streamRateMsg;        
@@ -131,12 +131,6 @@ class MavrosCommunicator
         */
         bool SetModeStabilize();
 
-        /**
-        Sets FCU Mode to "ALT_HOLD", altitude (depth) hold mode
-
-        @return boolean success
-        */
-        bool SetModeAltHold();
 
         /**
         Sets FCU Mode to "MANUAL"

@@ -26,8 +26,6 @@ MavrosCommunicator::MavrosCommunicator()
     _manualModeMsg.request.custom_mode = "MANUAL";
     _stabilizeModeMsg.request.base_mode = 0;
     _stabilizeModeMsg.request.custom_mode = "STABILIZE";
-    _altHoldModeMsg.request.base_mode = 0;
-    _altHoldModeMsg.request.custom_mode = "ALT_HOLD";
     _acroModeMsg.request.base_mode = 0;
     _acroModeMsg.request.custom_mode = "ACRO";
     _armMsg.request.value = true;
@@ -175,24 +173,6 @@ bool MavrosCommunicator::SetModeStabilize()
             ROS_WARN("Set mode to STABILIZE failed.");
         }
         return _stabilizeModeMsg.response.mode_sent;
-    }
-    ROS_WARN("Failed to use /mavros/set_mode serivce. Set mode to STABILIZE failed.");
-    return false;
-}
-
-bool MavrosCommunicator::SetModeAltHold()
-{
-    if (_modeSrv.call(_altHoldModeMsg))
-    {
-        if (_altHoldModeMsg.response.mode_sent)
-        {
-            ROS_INFO("Set mode to ALT_HOLD succeeded.");
-        }
-        else
-        {
-            ROS_WARN("Set mode to ALT_HOLD failed.");
-        }
-        return _altHoldModeMsg.response.mode_sent;
     }
     ROS_WARN("Failed to use /mavros/set_mode serivce. Set mode to STABILIZE failed.");
     return false;
