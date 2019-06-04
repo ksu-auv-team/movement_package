@@ -14,7 +14,7 @@ sudo apt update && \
 sudo apt install ros-melodic-desktop-full && \
 sudo rosdep init && \
 rosdep update && \
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc && \
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc && 
 ```
 
 **If you are setting up the whole sub, you should follow the instructions on the [sub-utilities repo](https://github.com/ksu-auv-team/sub-utilities.git):**
