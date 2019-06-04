@@ -1,4 +1,4 @@
-### Installation:
+# Installation:
 
 ```bash
 sudo apt update && \
@@ -17,11 +17,33 @@ rosdep update && \
 echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc && 
 ```
 
-**If you are setting up the whole sub, you should follow the instructions on the [sub-utilities repo](https://github.com/ksu-auv-team/sub-utilities.git):**
 ```bash
-TODO: Add Instructions from sub-utilities
+# install ros packages
+sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-msgs \
+    ros-melodic-cmake-modules ros-melodic-control-toolbox ros-melodic-joy
 ```
 
+```bash
+# install geoid's for mavros
+sudo geographiclib-get-geoids minimal
+```
+
+## Install movement\_package inside of sub-utilities
+
+If you plan to be doing development on the whole sub, I would recoment you do these instructions, not the ones that are for installing only the movement\_package
+
+**If you are setting up the whole sub, you should follow the instructions on the [sub-utilities repo](https://github.com/ksu-auv-team/sub-utilities.git), but they have been copied here also:**
+```bash
+# Setup local repo
+cd path/to/sub-utilities
+git submodule init
+git submodule update
+cd catkin_ws/src
+catkin_init_workspace
+catkin_make -j $(nproc) -C ..
+```
+
+## Install movement\_package only
 **If you are only setting up this repo, not the whole sub, follow these instrucitons:**
 ```bash
 #Setup Catkin Workspace
@@ -34,25 +56,11 @@ source ~/.bashrc
 ```
 
 ```bash
-# install ros packages
-sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-msgs \
-    ros-melodic-cmake-modules ros-melodic-control-toolbox ros-melodic-joy
-```
-
-```bash
-# install geoid's for mavros
-sudo geographiclib-get-geoids minimal
-```
-
-
-**If installing only this repo:**
-```bash
 # install movement library
 cd ~/catkin_ws/src && \
 git clone https://github.com/ksu-auv-team/movement_package.git && \
 cm
 ```
 
-
-### Running:
+## Running:
 ```roslaunch [tab]``` to seee options
