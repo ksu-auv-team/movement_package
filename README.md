@@ -5,17 +5,24 @@ sudo apt update && \
 sudo apt -y install git vim cmake catkin
 ```
 
+If you have any issues installing ROS, checkout the official [ROS Wiki](http://wiki.ros.org/melodic/Installation/Ubuntu)
 ```bash
-#Install ROS Kinetic
-sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu xenial main" > /etc/apt/sources.list.d/ros-latest.list' && \
-sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116 && \
+#Install ROS Melodic
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 && \
 sudo apt update && \
-sudo apt -y install ros-kinetic-ros-core && \
+sudo apt install ros-melodic-desktop-full && \
 sudo rosdep init && \
 rosdep update && \
-echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc && \
-echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc && \
 ```
+
+**If you are setting up the whole sub, you should follow the instructions on the [sub-utilities repo](https://github.com/ksu-auv-team/sub-utilities.git):**
+```bash
+TODO: Add Instructions from sub-utilities
+```
+
+**If you are only setting up this repo, not the whole sub, follow these instrucitons:**
 ```bash
 #Setup Catkin Workspace
 mkdir -p ~/catkin_ws/src && \
@@ -28,8 +35,8 @@ source ~/.bashrc
 
 ```bash
 # install ros packages
-sudo apt -y install ros-kinetic-mavlink ros-kinetic-mavros ros-kinetic-mavros-msgs \
-    ros-kinetic-cmake-modules ros-kinetic-control-toolbox  ros-kinetic-joy
+sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-msgs \
+    ros-melodic-cmake-modules ros-melodic-control-toolbox ros-melodic-joy
 ```
 
 ```bash
@@ -37,6 +44,8 @@ sudo apt -y install ros-kinetic-mavlink ros-kinetic-mavros ros-kinetic-mavros-ms
 sudo geographiclib-get-geoids minimal
 ```
 
+
+**If installing only this repo:**
 ```bash
 # install movement library
 cd ~/catkin_ws/src && \
