@@ -2,7 +2,8 @@
 
 ```bash
 sudo apt update && \
-sudo apt -y install git vim cmake catkin
+sudo apt -y install git vim cmake catkin python-catkin-pkg-modules && \
+source /opt/ros/melodic/setup.bash
 ```
 
 If you have any issues installing ROS, checkout the official [ROS Wiki](http://wiki.ros.org/melodic/Installation/Ubuntu)
@@ -14,7 +15,7 @@ sudo apt update && \
 sudo apt install ros-melodic-desktop-full && \
 sudo rosdep init && \
 rosdep update && \
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc && 
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 ```
 
 ```bash
@@ -51,7 +52,7 @@ mkdir -p ~/catkin_ws/src && \
 cd ~/catkin_ws/src && \
 catkin_init_workspace && \
 catkin_make -C ~/catkin_ws/ && \
-echo "alias cm='catkin_make -j $(nproc) -C ~/catkin_ws/'" >> ~/.bash_aliases &&\
+echo "alias cm='catkin_make -j $(nproc) -C ~/catkin_ws/'" >> ~/.bash_aliases && \
 source ~/.bashrc
 ```
 
