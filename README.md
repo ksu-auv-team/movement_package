@@ -37,13 +37,14 @@ If you plan to be doing development on the whole sub, I would recoment you do th
 ```bash
 # Setup local repo
 cd path/to/sub-utilities
-echo "source <output-from-pwd>/catkin_ws/devel/setup.bash" >> ~/.bashrc # Make sure to replace <output-from-pwd> with the actual output
-source ~/.bashrc
 git submodule init
 git submodule update
 cd catkin_ws/src
 catkin_init_workspace
 catkin_make -j $(nproc) -C ..
+cd ../ #to sub-utilities/catkin_ws
+"source <output-from-pwd>/devel/setup.bash" >> ~/.bashrc # Make sure to replace <output-from-pwd> with the actual output
+source ~/.bashrc
 ```
 
 ## Install movement\_package only
