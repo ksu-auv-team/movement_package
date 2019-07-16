@@ -91,7 +91,7 @@ void Controller::ControlLoop()
 void Controller::Sequencing()
 {
     MavrosCommunicator->SetModeManual();
-    for(int i = 1440; i <= 1660; i++)
+/*    for(int i = 1440; i <= 1660; i++)
     {
         MavrosCommunicator->SetOverrideMessage(YAW_CHAN, i);
         MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, i);
@@ -99,6 +99,13 @@ void Controller::Sequencing()
         ros::spinOnce();
         MavrosCommunicator->FCUCommRate.sleep();
     }
-    MavrosCommunicator->SetOverrideMessage(YAW_CHAN, MID_PWM);
-        MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, MID_PWM);
+*/
+        MavrosCommunicator->SetOverrideMessage(YAW_CHAN, 1500);
+        MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, 1500);
+        MavrosCommunicator->PublishOverrideMessage();
+        ros::spinOnce();
+        MavrosCommunicator->FCUCommRate.sleep();
+
+      MavrosCommunicator->SetOverrideMessage(YAW_CHAN, MID_PWM);
+      MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, MID_PWM);
 }
